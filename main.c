@@ -43,7 +43,6 @@ static void help(void)
     puts("Available commands:\n");
     puts("help               - Show this command");
     puts("convolve           - Perform hardcoded convolution");
-    puts("test               - Test Command");
     puts("reboot             - Reboot CPU");
 }
 
