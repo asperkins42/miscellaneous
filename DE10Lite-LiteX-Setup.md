@@ -1,20 +1,20 @@
 Open a new terminal an execute the command below
 
-**`$ ssh login.excl.ornl.gov
+`$ ssh login.excl.ornl.gov`
 
-The terminal will prompt you by asking for you XCAMS password. After putting your password in, you will get a "Welcome to the Experimental Computing Laboratory" message. At this point, run **ssh-keygen** to generate a new SSH pair. 
+The terminal will prompt you by asking for you XCAMS password. After putting your password in, you will get a "Welcome to the Experimental Computing Laboratory" message. At this point, run `$ ssh-keygen` to generate a new SSH pair. 
 
-After the pair is generated, run **`$ ssh-copy-id login.excl.ornl.gov`
+After the pair is generated, run `$ ssh-copy-id login.excl.ornl.gov`
 
-When prompted, type yes to copy the new key to ORNL. Exit to reload. Now ssh into the login node again using the command from earlier. From here, you should be able to run **`ssh zenith
+When prompted, type yes to copy the new key to ORNL. Exit to reload. Now ssh into the login node again using the command from earlier `$ ssh login.excl.ornl.gov`. From here, you should be able to run `ssh zenith`
 
-Exit twice now to fully log out of ExCL. Now run **`$ scp username@login.excl.ornl.gov:.ssh/id_rsa .ssh/id_rsa
+`$ exit` twice now to fully log out of ExCL. Run `$ scp username@login.excl.ornl.gov:.ssh/id_rsa .ssh/id_rsa`
 
-It will prompt you for your password again. Now run **`$ scp username@login.excl.ornl.gov:.ssh/id_rsa.pub .ssh/id_rsa.pub
+It will prompt you for your password again. Now run `$ scp username@login.excl.ornl.gov:.ssh/id_rsa.pub .ssh/id_rsa.pub`
 
-This should be the last time it asks you for your password. Run a **ls -al .ssh** to make sure the keys are copied. You should now be able to **ssh** into **login.excl.ornl.gov** without needing to enter your password. **Exit ORNL again**
+This should be the last time it asks you for your password. Run `$ ls -al .ssh` to make sure the keys are copied. You should now be able to `$ ssh login.excl.ornl.gov` without entering your password. `$ exit` ORNL again
 
-**cd .ssh** and run **ls**. If a config file does not exits, create one with **touch config**. Open the config file in a text editor and add these lines.
+`$ cd .ssh` and run `$ ls`. If a config file does not exist, create one with `$ touch config`. Open the config file in a text editor (`$ vim config`) and add these lines.
 
 ```
 Host excl
@@ -27,7 +27,7 @@ Host zenith2
     ProxyJump excl 
 ```
 
-After this file is created, you should be able to run **$ ssh zenith** to ssh into the zenith node without a password. 
+After this file is created, you should be able to run `$ ssh zenith` to ssh into the zenith node without a password. 
 
 **Using VSCode**
 Open VSCode and install the "Remote - SSH" extension. There should now be a Remotes section on the left side menu bar. Clicking the arrow will connect you to that host. You should be able to open a new terminal and see that you are in the zenith node.
@@ -36,7 +36,7 @@ In VSCode, go to settings, search "lockfiles" and make sure the **Remote.SSH: Lo
 
 **Running LiteX and Loading a Kernel**
 
-Connect to zenith, then run **git clone https://code.ornl.gov/seg/public/litex-setup-de10lite.git
+Connect to zenith, then run `$ git clone https://code.ornl.gov/seg/public/litex-setup-de10lite.git`
 
 This will load Brett's tutorial repository onto the zenith node. Make sure you have setup a Python virtual environment by running these commands.
 
@@ -64,9 +64,11 @@ env | grep SLURM_FPGA
 python -m litex_boards.targets.digilent_arty --variant a7-100 --build --load
 
 ```
-Now, navigate to the software directory and run Make. Once you have the app.bin file, you should be able to load it by running `litex_term /dev/ttyUSB1 --kernel software/app.bin `
+Now, navigate to the software directory and run `$ Make`. Once you have the app.bin file, you should be able to load it by running `$ litex_term /dev/ttyUSB1 --kernel software/app.bin `
 
-When I asked him about it yesterday, Aaron said that we should be able to use either $SLURM_FPGA_FILE or $SLURM_FPGA_NAME in place of "/dev/ttyUSB1". 
+When I asked him about it, Aaron said that we should be able to use either $SLURM_FPGA_FILE or $SLURM_FPGA_NAME in place of "/dev/ttyUSB1". 
+
+You can pull my updated code from https://github.com/asperkins42/miscellaneous/edit/main/main.c
 
 
 
