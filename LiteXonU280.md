@@ -51,3 +51,5 @@ Traceback (most recent call last):
     raise OSError("Error occured during Vivado's script execution.")
 OSError: Error occured during Vivado's script execution.
 ```
+
+At this point, I navigate to `.venv/lib/python3.10/site-packages/litex_boards/platforms/xilinx_alveo_u280.py` and edit line 228, where I remove -es1 from the XilinxUSPlatform init. At this point I re-run the Python command from earlier and it still fails. https://docs.amd.com/r/en-US/ug1314-alveo-u280-reconfig-accel/Creating-a-Vivado-RTL-Project shows that this new part number is the correct one, but https://adaptivesupport.amd.com/s/article/000036719?language=en_US says that as of Vivado 2024.1, some U280 part numbers are removed because they are end of life. Unsure where to go from here. 
