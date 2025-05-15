@@ -1,18 +1,19 @@
 ### Trying to Get RiscV core flashed to U280 using instructions from DE10Lite Tutorial
 
+Following the DE10Lite tutorial, these are the initial commands I run
 ```
 $ fish
 $ sfpgarun-u280 fish
 $ bass module load vitis
+$ python3 -m venv --prompt litex .venv
 $ source .venv/bin/activate.fish
 $ python3 -m litex_boards.targets.xilinx_alveo_u280 --build --load
 ```
 
-I added git+https://github.com/enjoy-digital/litepcie.git to scripts/requirements.txt on my machine because the Python command was throwing an error, so I ran this command.
+I added `git+https://github.com/enjoy-digital/litepcie.git` to scripts/requirements.txt on my machine because the Python command was throwing an error, so I ran this command.
 `$ pip install -r scripts/requirements.txt `
 
 At this point, I run the python3 command `$ python3 -m litex_boards.targets.xilinx_alveo_u280 --build --load` again, where it fails. Here is the error log
-
 ```
 ****** Vivado v2024.2 (64-bit)
   **** SW Build 5239630 on Fri Nov 08 22:34:34 MST 2024
