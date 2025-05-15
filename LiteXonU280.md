@@ -10,7 +10,7 @@ $ source .venv/bin/activate.fish
 $ python3 -m litex_boards.targets.xilinx_alveo_u280 --build --load
 ```
 
-I added `git+https://github.com/enjoy-digital/litepcie.git` to scripts/requirements.txt on my machine because the Python command was throwing an error, so I ran this command.
+I added `git+https://github.com/enjoy-digital/litepcie.git` to scripts/requirements.txt because the Python command was throwing an error, so I ran this command.
 `$ pip install -r scripts/requirements.txt `
 
 At this point, I run the python3 command `$ python3 -m litex_boards.targets.xilinx_alveo_u280 --build --load` again, where it fails. Here is the error log
