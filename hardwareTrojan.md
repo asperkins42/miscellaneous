@@ -11,3 +11,10 @@ The remaining six chips on the top row are the rest of the ring oscillators. The
 On the second row, the first chip is a counter. Each RO feeds into the input of the counter, and the most significant outputs of the two counters are used as inputs for the first three D-Flip Flops (The top row of the next three chips). One counter controls the input to the first of the three streaming DFFs, while the other counter controls all three of the clocks. This makes it so that on every clock edge, the input advances one stage. The second set of DFFs (the bottom row of the same three chips) handles the storage of the current value. The output of the top three DFFs feed into the input of the bottom three DFFs, and these are clocked by a button (that I have just noticed is absent from the picture, but would connect the red (5V) wire to the white wire at the end of the breadboard we are currently on). When this button is pressed, the value that is currently being output by the top three DFFs is locked into the bottom three DFFs and is output on their Q pin. These three bits are then fed into a hexadecimal decoder (the final black IC on this breadboard) whose most significant value is held to 0V. The outputs of this decoder are connected to the seven-segment display as shown. 
 
 ## Trojan Activation 
+![alt text](images/asperkins42_hardwareTrojanImg2.jpg "HWT 2")
+
+In this image, you can see the bottom two breadboard, where not much is going on. Breadboard 3 houses the on/off switch for the Trojan, along with the AND gate, the capacitors, and the resistors that make up the Trojan. When the switch is turned on, 5V are supplied to the AND gate and the RC circuit. The RC circuit has a time constant (around 4 seconds) so that once the capacitor fully charges, both inputs to the AND gate go high, resulting in a 1 being output. The 1 is then propagated to the XOR gates from the beginning, which locks the circuit into whichever number was currently rolled. 
+
+The bottom breadboard simply has a voltage regulator that takes in 9V and outputs 5V. 
+
+
