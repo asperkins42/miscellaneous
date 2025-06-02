@@ -299,3 +299,55 @@ asperkins42@milan3:~(fpgarun-u280)$ python3 -m venv --prompt litex .venv        
 asperkins42@milan3:~(fpgarun-u280)$ source .venv/bin/activate.fish                                                                                                                                                   <- 1s742 |  8:10PM
 (litex) asperkins42@milan3:~(fpgarun-u280)$ python3 -m litex_boards.targets.xilinx_alveo_u280 --build --load --with-hbm --sys-clk-freq 50e6
 ```
+After running the Python command shown at the end of the last block, I uploaded the app.bin file to see if it would run on the HBM-enabled FPGA and this is the result. It uploaded and booted, but I think there are some error in alignment and so the program didn't execute properly. Looking into this currently.
+```
+(litex) asperkins42@milan3:~(fpgarun-u280)$ litex_term /dev/ttyUSB2 --kernel litex-setup-de10lite/software/app.bin                                                                                               <- 1m 59s481 |  8:30PM
+
+litex> reboot
+
+        __   _ __      _  __
+       / /  (_) /____ | |/_/
+      / /__/ / __/ -_)>  <
+     /____/_/\__/\__/_/|_|
+   Build your hardware, easily!
+
+ (c) Copyright 2012-2024 Enjoy-Digital
+ (c) Copyright 2007-2015 M-Labs
+
+ BIOS built on Jun  2 2025 00:10:39
+ BIOS CRC passed (79c923db)
+
+ LiteX git sha1: --------
+
+--=============== SoC ==================--
+CPU:            VexRiscv @ 250MHz
+BUS:            wishbone 32-bit @ 4GiB
+CSR:            32-bit data
+ROM:            128.0KiB
+SRAM:           8.0KiB
+MAIN-RAM:       256.0MiB
+
+--========== Initialization ============--
+
+Memtest at 0x40000000 (2.0MiB)...
+  Write: 0x40000000-0x40200000 2.0MiB     
+   Read: 0x40000000-0x40200000 2.0MiB     
+Memtest OK
+Memspeed at 0x40000000 (Sequential, 2.0MiB)...
+  Write speed: 52.8MiB/s
+   Read speed: 20.4MiB/s
+
+--============== Boot ==================--
+Booting from serial...
+Press Q or ESC to abort boot completely.
+sL5DdSMmkekro
+[LITEX-TERM] Received firmware download request from the device.
+[LITEX-TERM] Uploading litex-setup-de10lite/software/app.bin to 0x40000000 (13816 bytes)...
+[LITEX-TERM] Upload calibration... (inter-frame: 10.00us, length: 64)
+[LITEX-TERM] Upload complete (9.8KB/s).
+[LITEX-TERM] Booting the device.
+[LITEX-TERM] Done.
+Executing booted program at 0x40000000
+
+--============= Liftoff! ===============--
+```
