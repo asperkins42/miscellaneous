@@ -138,3 +138,151 @@ WARNING: [Labtoolstcl 44-128] No matching hw_devices were found.
 ERROR: [Labtoolstcl 44-5] Could not find current or explicit device for command
 INFO: [Common 17-206] Exiting Vivado at Fri May 16 16:33:10 2025...
 ```
+
+### Running code on the LiteX core
+```
+asperkins42@milan3:~$ fish
+
+Welcome to fish, the friendly interactive shell
+asperkins42@milan3:~$ sfpgarun-u280 fish                                                                                                                                                                                                                   <-  7:56PM
+
+Welcome to fish, the friendly interactive shell
+asperkins42@milan3:~(fpgarun-u280)$ bass module load vitis/2020.2                                                                                                                                                                                          <-  7:56PM
+asperkins42@milan3:~(fpgarun-u280)$ source .venv/bin/activate.fish                                                                                                                                                                                 <- 0s176 |  7:56PM
+(litex) asperkins42@milan3:~(fpgarun-u280)$ litex_term /dev/ttyUSB2                                                                                                                                                                                <- 0s001 |  7:56PM
+
+litex> reboot
+
+        __   _ __      _  __
+       / /  (_) /____ | |/_/
+      / /__/ / __/ -_)>  <
+     /____/_/\__/\__/_/|_|
+   Build your hardware, easily!
+
+ (c) Copyright 2012-2024 Enjoy-Digital
+ (c) Copyright 2007-2015 M-Labs
+
+ BIOS built on May 20 2025 22:58:18
+ BIOS CRC passed (4f3804ae)
+
+ LiteX git sha1: --------
+
+--=============== SoC ==================--
+CPU:            VexRiscv @ 150MHz
+BUS:            wishbone 32-bit @ 4GiB
+CSR:            32-bit data
+ROM:            128.0KiB
+SRAM:           8.0KiB
+L2:             8.0KiB
+SDRAM:          16.0GiB 64-bit @ 1200MT/s (CL-9 CWL-9)
+MAIN-RAM:       1.0GiB
+
+--========== Initialization ============--
+
+Initializing SDRAM @0x40000000...
+Switching SDRAM to software control.
+Write leveling:
+  tCK equivalent taps: 464
+  Cmd/Clk scan (0-232)
+  |0111  |00011  |00000  |00000| best: 0
+  Setting Cmd/Clk delay to 0 taps.
+  Data scan:
+  m0: |1111111111100000000000000| delay: 00
+  m1: |1111111111000000000000001| delay: 00
+  m2: |1111111000000000000011111| delay: -
+  m3: |1111100000000000000111111| delay: 299
+  m4: |1000000000000000111111111| delay: 242
+  m5: |1111110000000000000011111| delay: -
+  m6: |1111111100000000000000111| delay: 00
+  m7: |1111111111000000000000001| delay: 00
+Write latency calibration:
+m0:6 m1:6 m2:6 m3:0 m4:6 m5:6 m6:6 m7:6 
+Read leveling:
+  m0, b00: |00000000000000000000000000000000| delays: -
+  m0, b01: |00000000000000000000000000000000| delays: -
+  m0, b02: |00000000000000000000000000000000| delays: -
+  m0, b03: |00000000000000000000000000000000| delays: -
+  m0, b04: |11100000000000000000000000000000| delays: 21+-21
+  m0, b05: |00000111111111111100000000000000| delays: 174+-97
+  m0, b06: |00000000000000000000111111111111| delays: 404+-98
+  m0, b07: |00000000000000000000000000000000| delays: -
+  best: m0, b06 delays: 404+-100
+  m1, b00: |00000000000000000000000000000000| delays: -
+  m1, b01: |00000000000000000000000000000000| delays: -
+  m1, b02: |00000000000000000000000000000000| delays: -
+  m1, b03: |00000000000000000000000000000000| delays: -
+  m1, b04: |11111110000000000000000000000000| delays: 51+-51
+  m1, b05: |00000000011111111111100000000000| delays: 234+-98
+  m1, b06: |00000000000000000000000011111111| delays: 443+-67
+  m1, b07: |00000000000000000000000000000000| delays: -
+  best: m1, b05 delays: 235+-98
+  m2, b00: |00000000000000000000000000000000| delays: -
+  m2, b01: |00000000000000000000000000000000| delays: -
+  m2, b02: |00000000000000000000000000000000| delays: -
+  m2, b03: |00000000000000000000000000000000| delays: -
+  m2, b04: |11111110000000000000000000000000| delays: 54+-54
+  m2, b05: |00000000001111111111110000000000| delays: 242+-98
+  m2, b06: |00000000000000000000000011111111| delays: 444+-66
+  m2, b07: |00000000000000000000000000000000| delays: -
+  best: m2, b05 delays: 241+-98
+  m3, b00: |00000000000000000000000000000000| delays: -
+  m3, b01: |00000000000000000000000000000000| delays: -
+  m3, b02: |00000000000000000000000000000000| delays: -
+  m3, b03: |00000000000000000000000000000000| delays: -
+  m3, b04: |00000000000000000000000000000000| delays: -
+  m3, b05: |00000000000000000000000000000000| delays: -
+  m3, b06: |00000000000000000000000000000000| delays: -
+  m3, b07: |00000000000000000000000000000000| delays: -
+  best: m3, b04 delays: -
+  m4, b00: |00000000000000000000000000000000| delays: -
+  m4, b01: |00000000000000000000000000000000| delays: -
+  m4, b02: |00000000000000000000000000000000| delays: -
+  m4, b03: |00000000000000000000000000000000| delays: -
+  m4, b04: |00000000000000000000000000000000| delays: -
+  m4, b05: |00000000000000000000000000000000| delays: -
+  m4, b06: |00000000000000000000000000000000| delays: -
+  m4, b07: |00000000000000000000000000000000| delays: -
+  best: m4, b05 delays: -
+  m5, b00: |00000000000000000000000000000000| delays: -
+  m5, b01: |00000000000000000000000000000000| delays: -
+  m5, b02: |00000000000000000000000000000000| delays: -
+  m5, b03: |00000000000000000000000000000000| delays: -
+  m5, b04: |01111111111111000000000000000000| delays: 108+-103
+  m5, b05: |00000000000000001111111111110000| delays: 345+-98
+  m5, b06: |00000000000000000000000000000001| delays: 498+-13
+  m5, b07: |00000000000000000000000000000000| delays: -
+  best: m5, b04 delays: 107+-104
+  m6, b00: |00000000000000000000000000000000| delays: -
+  m6, b01: |00000000000000000000000000000000| delays: -
+  m6, b02: |00000000000000000000000000000000| delays: -
+  m6, b03: |00000000000000000000000000000000| delays: -
+  m6, b04: |11111111110000000000000000000000| delays: 74+-74
+  m6, b05: |00000000000011111111111100000000| delays: 283+-98
+  m6, b06: |00000000000000000000000000011111| delays: 466+-45
+  m6, b07: |00000000000000000000000000000000| delays: -
+  best: m6, b05 delays: 284+-99
+  m7, b00: |00000000000000000000000000000000| delays: -
+  m7, b01: |00000000000000000000000000000000| delays: -
+  m7, b02: |00000000000000000000000000000000| delays: -
+  m7, b03: |00000000000000000000000000000000| delays: -
+  m7, b04: |11111111000000000000000000000000| delays: 57+-57
+  m7, b05: |00000000001111111111110000000000| delays: 246+-99
+  m7, b06: |00000000000000000000000011111111| delays: 443+-67
+  m7, b07: |00000000000000000000000000000000| delays: -
+  best: m7, b05 delays: 246+-98
+Switching SDRAM to hardware control.
+Memtest at 0x40000000 (2.0MiB)...
+  Write: 0x40000000-0x40200000 2.0MiB     
+   Read: 0x40000000-0x40200000 2.0MiB     
+  bus errors:  48/256
+  addr errors: 0/8192
+  data errors: 522250/524288
+Memtest KO
+Memory initialization failed
+
+--============= Console ================--
+
+litex> 
+```
+
+LiteX fails startup tests when trying to run the litex_term command. Uncertain why this happens, but the issue seems similar to ones that occurred when running the DE10Lite at first. 
