@@ -285,4 +285,17 @@ Memory initialization failed
 litex> 
 ```
 
-LiteX fails startup tests when trying to run the litex_term command. Uncertain why this happens, but the issue seems similar to ones that occurred when running the DE10Lite at first. 
+LiteX fails startup tests when trying to run the litex_term command. Uncertain why this happens, but the issue seems similar to ones that occurred when running the DE10Lite at first. Attempting to resolve by using HBM 
+
+```
+asperkins42@milan3:~$ fish
+
+Welcome to fish, the friendly interactive shell
+asperkins42@milan3:~$ sfpgarun-u280 fish                                                                                                                                                                                     <-  8:10PM
+
+Welcome to fish, the friendly interactive shell
+asperkins42@milan3:~(fpgarun-u280)$ bass module load vitis/2020.2                                                                                                                                                            <-  8:10PM
+asperkins42@milan3:~(fpgarun-u280)$ python3 -m venv --prompt litex .venv                                                                                                                                             <- 0s170 |  8:10PM
+asperkins42@milan3:~(fpgarun-u280)$ source .venv/bin/activate.fish                                                                                                                                                   <- 1s742 |  8:10PM
+(litex) asperkins42@milan3:~(fpgarun-u280)$ python3 -m litex_boards.targets.xilinx_alveo_u280 --build --load --with-hbm --sys-clk-freq 50e6
+```
