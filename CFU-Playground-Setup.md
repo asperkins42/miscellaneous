@@ -144,7 +144,21 @@ This incident has been reported to the administrator.
 
 So sorry Steve, I keep asking you to install packages.
 
-At the moment I cannot get any farther without this package installed, but once it is installed, it should be straightforward to finish setup. Really glad I set up the GUI, the terminal was getting old.
+At the moment I cannot get any farther without this package installed, but once it is installed, it should be straightforward to finish setup. Really glad I set up the GUI, the terminal was getting old. I think the following lines will work if I get that package installed. 
+
+```
+# Build
+cd proj/proj_template
+make clean
+make prog TARGET=xilinx_u280 USE_VIVADO=1
+make load TARGET=xilinx_u280 BUILD_JOBS=4
+```
+
+## Important things to note
+
+* Pretty sure that I cannot run two virtual environments at once. Either amaranth needs to be installed to the LiteX one or I just don't use amaranth and use Verilog instead.
+
+
 
 
 
