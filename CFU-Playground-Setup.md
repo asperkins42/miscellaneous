@@ -1,4 +1,4 @@
-### CFU Playground setup for ArtyA7
+## CFU Playground setup for ArtyA7
 
 I began by following the [setup guide] (https://cfu-playground.readthedocs.io/en/latest/setup-guide.html) for CFU-Playground.
 Step 1 was easy, given that the Arty A7 was already connected to zenith2. I setup [FoxyProxy] (https://docs.excl.ornl.gov/quick-start-guides/excl-remote-development#setup-foxyproxy) and [ThinLinc] (https://docs.excl.ornl.gov/~/revisions/tgK4OWTltCS04RkJelGW/quick-start-guides/thinlinc) so that I could access 
@@ -13,7 +13,7 @@ Afterward, run `pip install amaranth-yosys` to install Amaranth, which is what w
 Step 4 involves toolchain setup. For the ArtyA7, you can use step 4a which is `make install-sf` then, when that finishes `make enter-sf`. 
 When you are building the bitsream later, to use Symbiflow, you must add `USE_SYMBIFLOW` to the end of the command. 
 
-### CFU Playground setup for Alveo U280
+## CFU Playground setup for Alveo U280
 
 After cloning the repository to the milan3 node, I entered the fish terminal. Step 3 will throw a Warning saying that Vivado is not found in path if you don't load the Vitis module beforehand, so I amended the instructions in the setup to load that module beforehand. So far the execution is as follows:
 
@@ -136,7 +136,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 I troubleshot the `vivado -version` problem via ChatGPT and saw that it was because Vivado 2020.2 expects an older version of a file, while this version of Ubuntu supplies a newer file format. This is fixed via a package install. 
 
 ```
-maranth) asperkins42@milan3:~/CFU-Playground (main %=)$ sudo apt install libtinfo5                                               <- 0s042 | 10:33PM
+(amaranth) asperkins42@milan3:~/CFU-Playground (main %=)$ sudo apt install libtinfo5                                               <- 0s042 | 10:33PM
 [sudo] password for asperkins42: 
 asperkins42 is not in the sudoers file.
 This incident has been reported to the administrator.
