@@ -142,7 +142,16 @@ asperkins42 is not in the sudoers file.
 This incident has been reported to the administrator.
 ```
 
-So sorry Steve, I keep asking you to install packages.
+So sorry, Steve, I keep asking you to install packages.
+
+libtinfo5 was installed via a `$ wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb` followed by asking Steve to install with `sudo dpkg -i libtinfo5_6.2-0ubuntu2_amd64.deb`
+
+This got libtinfo5 installed, and let me move on to the next problem.
+
+The earlier package amaranth-yosys expects the yosys package to already be installed, which I did not know. So, again, I asked Steve to install it and this is where we are. 
+
+
+
 
 At the moment I cannot get any farther without this package installed, but once it is installed, it should be straightforward to finish setup. Really glad I set up the GUI, the terminal was getting old. I think the following lines will work if I get that package installed. 
 
