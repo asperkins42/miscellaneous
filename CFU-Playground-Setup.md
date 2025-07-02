@@ -148,12 +148,70 @@ libtinfo5 was installed via a `$ wget http://security.ubuntu.com/ubuntu/pool/uni
 
 This got libtinfo5 installed, and let me move on to the next problem.
 
-The earlier package amaranth-yosys expects the yosys package to already be installed, which I did not know. So, again, I asked Steve to install it and this is where we are. 
+The earlier package amaranth-yosys expects the yosys package to already be installed, which I did not know. So, again, I asked Steve to install it, and he (or Aaron) did. 
+
+Now, we have all of our tools installed (Amaranth, Yosys, RISCV toolchain, Vivado, and probably even more that I am forgetting). I run my check script, and it prints:
+
+```
+(amaranth) asperkins42@milan3:~/CFU-Playground (main %=)$ source ~/likelyImportant/vivado-2020.2.fish                                      <- 0s629 |  8:56PM
+
+✅ Environment loaded:
+  Vivado:       /auto/software/swtree/ubuntu22.04/x86_64/Xilinx/Vivado/2020.2/bin/vivado
+  Vitis:        /auto/software/swtree/ubuntu22.04/x86_64/Xilinx/Vitis/2020.2/bin/vitis
+  XRT:          /opt/xilinx/xrt/bin/xbutil
+  RISC-V GCC:   /home/asperkins42/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc
+
+  Amaranth:     found at /home/asperkins42/CFU-Playground/amaranth/lib/python3.12/site-packages/amaranth/__init__.py
+  Yosys:        /usr/bin/yosys
+```
+
+From this point, I run `cd proj/proj_template` and `make clean` to get the directory set up, followed by `make prog TARGET=xilinx_u280 USE_VIVADO=1`.
+
+```
+(amaranth) asperkins42@milan3:~/C/p/proj_template (main %=)$ make prog TARGET=xilinx_u280 USE_VIVADO=1                                     <- 0s043 |  9:04PM
+/home/asperkins42/CFU-Playground/scripts/pyrun /home/asperkins42/CFU-Playground/proj/proj_template/cfu_gen.py 
+make -C /home/asperkins42/CFU-Playground/soc -f /home/asperkins42/CFU-Playground/soc/common_soc.mk prog
+make[1]: Entering directory '/home/asperkins42/CFU-Playground/soc'
+Building bitstream for xilinx_u280. CFU option: --cpu-cfu /home/asperkins42/CFU-Playground/proj/proj_template/cfu.v
+MAKEFLAGS=-j8 /home/asperkins42/CFU-Playground/scripts/pyrun ./common_soc.py --output-dir build/xilinx_u280.proj_template --csr-json build/xilinx_u280.proj_template/csr.json --cpu-cfu  /home/asperkins42/CFU-Playground/proj/proj_template/cfu.v --uart-baudrate 1843200 --target xilinx_u280  --toolchain vivado --build
+/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/integration/export.py:100: SyntaxWarning: invalid escape sequence '\d'
+  version = float(re.findall("\d+\.\d+", l)[-1])
+/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/cores/cpu/cv32e40p/core.py:78: SyntaxWarning: invalid escape sequence '\$'
+  res = re.search('\$\{DESIGN_RTL_DIR\}/(.+)', l)
+/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/cores/cpu/cv32e40p/core.py:80: SyntaxWarning: invalid escape sequence '\+'
+  if re.match('\+incdir\+', l):
+/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/cores/cpu/cv32e41p/core.py:65: SyntaxWarning: invalid escape sequence '\$'
+  res = re.search('\$\{DESIGN_RTL_DIR\}/(.+)', l)
+/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/cores/cpu/cv32e41p/core.py:67: SyntaxWarning: invalid escape sequence '\+'
+  if re.match('\+incdir\+', l):
+/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/cores/cpu/openc906/core.py:22: SyntaxWarning: invalid escape sequence '\$'
+  res = re.search('\$\{CODE_BASE_PATH\}/(.+)', l)
+/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/cores/cpu/openc906/core.py:24: SyntaxWarning: invalid escape sequence '\+'
+  if re.match('\+incdir\+', l):
+/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/cores/cpu/cva6/core.py:44: SyntaxWarning: invalid escape sequence '\$'
+  res = re.search('\$\{CVA6_REPO_DIR\}/(.+)', l)
+/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/cores/cpu/cva6/core.py:46: SyntaxWarning: invalid escape sequence '\+'
+  if re.match('\+incdir\+', l):
+Traceback (most recent call last):
+  File "/home/asperkins42/CFU-Playground/soc/./common_soc.py", line 57, in <module>
+    main()
+  File "/home/asperkins42/CFU-Playground/soc/./common_soc.py", line 47, in main
+    get_soc_constructor(args.target))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/asperkins42/CFU-Playground/soc/./common_soc.py", line 30, in get_soc_constructor
+    raise ValueError(f'Could not find "{target}" in supported boards: {s}')
+ValueError: Could not find "xilinx_u280" in supported boards: adi_adrv2crr_fmc, adi_plutosdr, alchitry_au, alchitry_mojo, aliexpress_stlv7325, aliexpress_xc7k420t, alinx_ax7010, alinx_axu2cga, antmicro_datacenter_ddr4_test_board, antmicro_lpddr4_test_board, arduino_mkrvidor4000, avnet_aesku40, berkeleylab_marble, camlink_4k, colorlight_5a_75x, colorlight_i5, decklink_intensity_pro_4k, decklink_mini_4k, decklink_quad_hdmi_recorder, digilent_arty, digilent_arty_s7, digilent_arty_z7, digilent_atlys, digilent_basys3, digilent_cmod_a7, digilent_genesys2, digilent_nexys4, digilent_nexys4ddr, digilent_nexys_video, digilent_pynq_z1, digilent_zedboard, ebaz4205, efinix_t8f81_dev_kit, efinix_titanium_ti60_f225_dev_kit, efinix_trion_t120_bga576_dev_kit, efinix_trion_t20_bga256_dev_kit, efinix_trion_t20_mipi_dev_kit, efinix_xyloni_dev_kit, ego1, enclustra_mercury_kx2, enclustra_mercury_xu5, fairwaves_xtrx, fpc_iii, gsd_butterstick, gsd_orangecrab, hackaday_hadbadge, hpcstore_xc7k420t, icebreaker, icebreaker_bitsy, jungle_electronics_fireant, kosagi_fomu, kosagi_netv2, krtkl_snickerdoodle, lambdaconcept_ecpix5, lattice_crosslink_nx_evn, lattice_crosslink_nx_vip, lattice_ecp5_evn, lattice_ecp5_vip, lattice_ice40up5k_evn, lattice_versa_ecp5, limesdr_mini_v2, linsn_rv901t, litex_acorn_baseboard, logicbone, machdyne_krote, machdyne_schoko, micronova_mercury2, mist, mnt_rkx7, muselab_icesugar, muselab_icesugar_pro, myminieye_runber, numato_aller, numato_mimas_a7, numato_nereid, numato_tagus, pano_logic_g2, qmtech_10cl006, qmtech_5cefa2, qmtech_ep4cex5, qmtech_ep4cgx150, qmtech_wukong, qmtech_xc7a35t, quicklogic_quickfeather, qwertyembedded_beaglewire, radiona_ulx3s, rcs_arctic_tern_bmc_card, redpitaya, rz_easyfpga, saanlima_pipistrello, scarabhardware_minispartan6, seeedstudio_spartan_edge_accelerator, siglent_sds1104xe, simple, sipeed_tang_nano, sipeed_tang_nano_4k, sipeed_tang_nano_9k, sipeed_tang_primer, sipeed_tang_primer_20k, sqrl_acorn, sqrl_fk33, sqrl_xcu1525, taobao_a_e115fb, terasic_de0nano, terasic_de10lite, terasic_de10nano, terasic_de1soc, terasic_de2_115, terasic_deca, terasic_sockit, tinyfpga_bx, trellisboard, trenz_c10lprefkit, trenz_cyc1000, trenz_max1000, trenz_te0725, trenz_tec0117, tul_pynq_z2, xilinx_ac701, xilinx_alveo_u250, xilinx_alveo_u280, xilinx_kc705, xilinx_kcu105, xilinx_kv260, xilinx_vc707, xilinx_vcu118, xilinx_zcu102, xilinx_zcu104, xilinx_zcu106, xilinx_zcu216, xilinx_zybo_z7, ztex213
+make[1]: *** [/home/asperkins42/CFU-Playground/soc/common_soc.mk:115: build/xilinx_u280.proj_template/gateware/xilinx_u280.bit] Error 1
+make[1]: Leaving directory '/home/asperkins42/CFU-Playground/soc'
+make: *** [../proj.mk:319: prog] Error 2
+```
+
+Well shoot. 
+
+Turns out this is a semi-quick fix. I named the board `xilinx_u280` instead of the correct `xilinx_alveo_u280`. We'll give it another shot. 
 
 
-
-
-At the moment I cannot get any farther without this package installed, but once it is installed, it should be straightforward to finish setup. Really glad I set up the GUI, the terminal was getting old. I think the following lines will work if I get that package installed. 
+At the moment, I cannot get any further without this package installed, but once it is installed, it should be straightforward to finish the setup. Really glad I set up the GUI, the terminal was getting old. I think the following lines will work if I get that package installed. 
 
 ```
 # Build
@@ -166,6 +224,53 @@ make load TARGET=xilinx_u280 BUILD_JOBS=4
 ## Important things to note
 
 * Pretty sure that I cannot run two virtual environments at once. Either amaranth needs to be installed to the LiteX one or I just don't use amaranth and use Verilog instead.
+* I've set up a fish script that should automatically source all of my toolchains and things. It's provided below (and probably in another file in this repository eventually)
+
+```
+# Fish shell environment setup for Vivado 2020.2, Vitis, XRT, Amaranth + RISC-V
+
+# Vivado / Vitis / XRT
+set -gx XILINX_VIVADO /auto/software/swtree/ubuntu22.04/x86_64/Xilinx/Vivado/2020.2
+set -gx XILINX_VITIS /auto/software/swtree/ubuntu22.04/x86_64/Xilinx/Vitis/2020.2
+set -gx XILINX_HLS $XILINX_VITIS
+set -gx XILINX_VIVADO_HLS $XILINX_VITIS
+set -gx XILINX_XRT /opt/xilinx/xrt
+set -gx XILINXD_LICENSE_FILE 2100@license.engr.tntech.edu
+
+# Add all tools + your RISC-V GCC to PATH
+set -gx PATH \
+    $XILINX_VIVADO/bin \
+    $XILINX_VITIS/bin \
+    $XILINX_VITIS/gnu/aarch64/lin/aarch64-none/bin \
+    $XILINX_VITIS/gnu/aarch64/lin/aarch64-linux/bin \
+    $XILINX_VITIS/gnu/aarch32/lin/gcc-arm-none-eabi/bin \
+    $XILINX_VITIS/gnu/aarch32/lin/gcc-arm-linux-gnueabi/bin \
+    $XILINX_VITIS/gnu/arm/lin/bin \
+    $XILINX_VITIS/gnu/armr5/lin/gcc-arm-none-eabi/bin \
+    $XILINX_VITIS/gnu/microblaze/lin/bin \
+    $XILINX_VITIS/gnu/microblaze/linux_toolchain/lin64_le/bin \
+    $XILINX_VITIS/tps/lnx64/cmake-3.3.2/bin \
+    $XILINX_VITIS/aietools/bin \
+    $XILINX_XRT/bin \
+    $HOME/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14/bin \
+    $PATH
+
+# Print friendly environment summary
+echo ""
+echo "✅ Environment loaded:"
+echo "  Vivado:       "(which vivado)
+echo "  Vitis:        "(which vitis)
+echo "  XRT:          "(which xbutil)
+echo "  RISC-V GCC:   "(which riscv64-unknown-elf-gcc)
+echo ""
+
+# Amaranth check: current python (likely from your venv)
+echo "  Amaranth:     "(python3 -c "import amaranth; print('found at '+amaranth.__file__)" 2>/dev/null; or echo 'not found')
+
+# Yosys check
+echo "  Yosys:        "(which yosys)
+echo ""
+```
 
 
 
