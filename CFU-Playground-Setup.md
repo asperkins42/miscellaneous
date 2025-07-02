@@ -210,6 +210,43 @@ Well shoot.
 
 Turns out this is a semi-quick fix. I named the board `xilinx_u280` instead of the correct `xilinx_alveo_u280`. We'll give it another shot. 
 
+```
+(amaranth) asperkins42@milan3:~/C/p/proj_template (main %=)$ make prog TARGET=xilinx_alveo_u280 USE_VIVADO=1                                                                          2 ↵ <- 1s267 |  9:05PM
+/home/asperkins42/CFU-Playground/scripts/pyrun /home/asperkins42/CFU-Playground/proj/proj_template/cfu_gen.py 
+make -C /home/asperkins42/CFU-Playground/soc -f /home/asperkins42/CFU-Playground/soc/common_soc.mk prog
+make[1]: Entering directory '/home/asperkins42/CFU-Playground/soc'
+Building bitstream for xilinx_alveo_u280. CFU option: --cpu-cfu /home/asperkins42/CFU-Playground/proj/proj_template/cfu.v
+MAKEFLAGS=-j8 /home/asperkins42/CFU-Playground/scripts/pyrun ./common_soc.py --output-dir build/xilinx_alveo_u280.proj_template --csr-json build/xilinx_alveo_u280.proj_template/csr.json --cpu-cfu  /home/asperkins42/CFU-Playground/proj/proj_template/cfu.v --uart-baudrate 1843200 --target xilinx_alveo_u280  --toolchain vivado --build
+Traceback (most recent call last):
+  File "/home/asperkins42/CFU-Playground/soc/./common_soc.py", line 57, in <module>
+    main()
+  File "/home/asperkins42/CFU-Playground/soc/./common_soc.py", line 47, in main
+    get_soc_constructor(args.target))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/asperkins42/CFU-Playground/soc/./common_soc.py", line 31, in get_soc_constructor
+    module = importlib.import_module(f'litex_boards.targets.{target}')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/asperkins42/CFU-Playground/third_party/python/litex_boards/litex_boards/targets/xilinx_alveo_u280.py", line 35, in <module>
+    from litepcie.software import generate_litepcie_software
+  File "/home/asperkins42/CFU-Playground/third_party/python/litepcie/litepcie/software/__init__.py", line 2, in <module>
+    from distutils.dir_util import copy_tree
+ModuleNotFoundError: No module named 'distutils'
+make[1]: *** [/home/asperkins42/CFU-Playground/soc/common_soc.mk:115: build/xilinx_alveo_u280.proj_template/gateware/xilinx_alveo_u280.bit] Error 1
+make[1]: Leaving directory '/home/asperkins42/CFU-Playground/soc'
+make: *** [../proj.mk:319: prog] Error 2
+```
+
+Another error, looks like we're missing the module distutils now. Hopefully we won't need Steve or Aaron for this one (we will...). On this Ubuntu, distutils is moved to python3-setuptools, so we will need python3-setuptools installed.
+
 
 At the moment, I cannot get any further without this package installed, but once it is installed, it should be straightforward to finish the setup. Really glad I set up the GUI, the terminal was getting old. I think the following lines will work if I get that package installed. 
 
