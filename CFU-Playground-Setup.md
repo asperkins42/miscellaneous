@@ -245,7 +245,54 @@ make[1]: Leaving directory '/home/asperkins42/CFU-Playground/soc'
 make: *** [../proj.mk:319: prog] Error 2
 ```
 
-Another error, looks like we're missing the module distutils now. Hopefully we won't need Steve or Aaron for this one (we will...). On this Ubuntu, distutils is moved to python3-setuptools, so we will need python3-setuptools installed.
+Another error, looks like we're missing the module distutils now. Hopefully we won't need Steve or Aaron for this one (we will...). On this Ubuntu, distutils is moved to python3-setuptools, so we will need python3-setuptools installed. 
+
+I asked Aaron about this and he said to just `pip install setuptools` inside of the virtual environment, which worked. Running the command again and I now get this error.
+
+```
+****** Vivado v2020.2 (64-bit)
+  **** SW Build 3064766 on Wed Nov 18 09:12:47 MST 2020
+  **** IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+    ** Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+
+source xilinx_alveo_u280.tcl
+# create_project -force -name xilinx_alveo_u280 -part xcu280-fsvh2892-2L-e-es1
+WARNING: [Device 21-436] No parts matched 'xcu280-fsvh2892-2L-e-es1'
+ERROR: [Coretcl 2-106] Specified part could not be found.
+INFO: [Common 17-206] Exiting Vivado at Wed Jul  2 18:54:10 2025...
+Traceback (most recent call last):
+  File "/home/asperkins42/CFU-Playground/soc/./common_soc.py", line 57, in <module>
+    main()
+  File "/home/asperkins42/CFU-Playground/soc/./common_soc.py", line 53, in main
+    workflow.run()
+  File "/home/asperkins42/CFU-Playground/soc/board_specific_workflows/general.py", line 125, in run
+    soc_builder = self.build_soc(soc)
+                  ^^^^^^^^^^^^^^^^^^^
+  File "/home/asperkins42/CFU-Playground/soc/board_specific_workflows/general.py", line 102, in build_soc
+    soc_builder.build(run=self.args.build, **kwargs)
+  File "/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/integration/builder.py", line 357, in build
+    vns = self.soc.build(build_dir=self.gateware_dir, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/asperkins42/CFU-Playground/third_party/python/litex/litex/soc/integration/soc.py", line 1277, in build
+    return self.platform.build(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/asperkins42/CFU-Playground/third_party/python/litex/litex/build/xilinx/platform.py", line 73, in build
+    return self.toolchain.build(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/asperkins42/CFU-Playground/third_party/python/litex/litex/build/xilinx/vivado.py", line 130, in build
+    return GenericToolchain.build(self, platform, fragment, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/asperkins42/CFU-Playground/third_party/python/litex/litex/build/generic_toolchain.py", line 113, in build
+    self.run_script(script)
+  File "/home/asperkins42/CFU-Playground/third_party/python/litex/litex/build/xilinx/vivado.py", line 376, in run_script
+    raise OSError("Error occured during Vivado's script execution.")
+OSError: Error occured during Vivado's script execution.
+make[1]: *** [/home/asperkins42/CFU-Playground/soc/common_soc.mk:115: build/xilinx_alveo_u280.proj_template/gateware/xilinx_alveo_u280.bit] Error 1
+make[1]: Leaving directory '/home/asperkins42/CFU-Playground/soc'
+make: *** [../proj.mk:319: prog] Error 2
+```
+
+But this is ok! I've had this error before. LiteX is only set up with the engineering sample part # for the U280. I just need to go to the platform definition for the board and fix the name of the device (remove -es1). I have done this and saved the file, now I will re-run the command. 
 
 
 At the moment, I cannot get any further without this package installed, but once it is installed, it should be straightforward to finish the setup. Really glad I set up the GUI, the terminal was getting old. I think the following lines will work if I get that package installed. 
