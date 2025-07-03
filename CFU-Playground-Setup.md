@@ -295,14 +295,330 @@ make: *** [../proj.mk:319: prog] Error 2
 But this is ok! I've had this error before. LiteX is only set up with the engineering sample part # for the U280. I just need to go to the platform definition for the board and fix the name of the device (remove -es1). I have done this and saved the file, now I will re-run the command. 
 
 
-At the moment, I cannot get any further without this package installed, but once it is installed, it should be straightforward to finish the setup. Really glad I set up the GUI, the terminal was getting old. I think the following lines will work if I get that package installed. 
-
 ```
 # Build
-cd proj/proj_template
-make clean
-make prog TARGET=xilinx_u280 USE_VIVADO=1
-make load TARGET=xilinx_u280 BUILD_JOBS=4
+
+make clean TARGET=xilinx_alveo_u280
+make prog TARGET=xilinx_alveo_u280 USE_VIVADO=1
+```
+
+I make clean the directory specifically related to the U280 and then run the make prog command, telling it to use Vivado. This runs all the way through, and then after the bitstream is generated, when the timing is checked, it errors out. That's ok for now, I'll fix the timing later.
+
+Next, I run `make load TARGET=xilinx_alveo_u280 BUILD_JOBS=4 TTY=/dev/ttyUSB2` and pray that ttyUSB2 is the correct one of the three available. I need to figure out how to check them. 
+
+Update: It looks like it was. After about 5 minutes, the kernel was loaded, and I typed `reboot` so LiteX terminal would boot with the golden tests in memory.
+
+```
+.
+.
+.
+.
+make[1]: Leaving directory '/home/asperkins42/CFU-Playground/proj/proj_template/build'
+Running interactively on FPGA Board
+make -C /home/asperkins42/CFU-Playground/soc -f /home/asperkins42/CFU-Playground/soc/common_soc.mk load_hook
+make[1]: Entering directory '/home/asperkins42/CFU-Playground/soc'
+MAKEFLAGS=-j8 /home/asperkins42/CFU-Playground/scripts/pyrun ./common_soc.py --output-dir build/xilinx_alveo_u280.proj_template --csr-json build/xilinx_alveo_u280.proj_template/csr.json --cpu-cfu  /home/asperkins42/CFU-Playground/proj/proj_template/cfu.v --uart-baudrate 1843200 --target xilinx_alveo_u280  --software-load --software-path /home/asperkins42/CFU-Playground/proj/proj_template/build/software.bin
+make[1]: Leaving directory '/home/asperkins42/CFU-Playground/soc'
+/home/asperkins42/CFU-Playground/soc/bin/litex_term --speed 1843200  --kernel /home/asperkins42/CFU-Playground/proj/proj_template/build/software.bin /dev/ttyUSB2
+reboot
+�
+        __   _ __      _  __
+       / /  (_) /____ | |/_/
+      / /__/ / __/ -_)>  <
+     /____/_/\__/\__/_/|_|
+   Build your hardware, easily!
+
+ (c) Copyright 2012-2022 Enjoy-Digital
+ (c) Copyright 2007-2015 M-Labs
+
+ BIOS built on Jul  2 2025 19:05:20
+ BIOS CRC passed (b99f5fb0)
+
+ LiteX git sha1: b9a1fec30
+
+--=============== SoC ==================--
+CPU:		VexRiscv_FullCfu @ 150MHz
+BUS:		WISHBONE 32-bit @ 4GiB
+CSR:		32-bit data
+ROM:		128KiB
+SRAM:		8KiB
+L2:		8KiB
+SDRAM:		1048576KiB 64-bit @ 1200MT/s (CL-9 CWL-9)
+
+--========== Initialization ============--
+Initializing SDRAM @0x40000000...
+Switching SDRAM to software control.
+Write leveling:
+  tCK equivalent taps: 468
+  Cmd/Clk scan (0-234)
+  |0011  |00010  |00000  |00000| best: 0
+  Setting Cmd/Clk delay to 0 taps.
+  Data scan:
+  m0: |1111111111100000000000000| delay: 00
+  m1: |1111111111000000000000001| delay: 00
+  m2: |1111111000000000000011111| delay: -
+  m3: |1111100000000000000111111| delay: 299
+  m4: |1100000000000000111111111| delay: 249
+  m5: |1111110000000000000011111| delay: -
+  m6: |1111111110000000000000111| delay: 00
+  m7: |1111111111100000000000001| delay: 00
+Write latency calibration:
+m0:6 m1:6 m2:6 m3:0 m4:0 m5:6 m6:6 m7:6 
+Read leveling:
+  m0, b00: |00000000000000000000000000000000| delays: -
+  m0, b01: |00000000000000000000000000000000| delays: -
+  m0, b02: |00000000000000000000000000000000| delays: -
+  m0, b03: |00000000000000000000000000000000| delays: -
+  m0, b04: |11100000000000000000000000000000| delays: 17+-17
+  m0, b05: |00000111111111111000000000000000| delays: 168+-100
+  m0, b06: |00000000000000000001111111111111| delays: 401+-101
+  m0, b07: |00000000000000000000000000000000| delays: -
+  best: m0, b06 delays: 399+-99
+  m1, b00: |00000000000000000000000000000000| delays: -
+  m1, b01: |00000000000000000000000000000000| delays: -
+  m1, b02: |00000000000000000000000000000000| delays: -
+  m1, b03: |00000000000000000000000000000000| delays: -
+  m1, b04: |11111100000000000000000000000000| delays: 47+-47
+  m1, b05: |00000000011111111111100000000000| delays: 225+-94
+  m1, b06: |00000000000000000000000111111111| delays: 438+-74
+  m1, b07: |00000000000000000000000000000000| delays: -
+  best: m1, b05 delays: 228+-95
+  m2, b00: |00000000000000000000000000000000| delays: -
+  m2, b01: |00000000000000000000000000000000| delays: -
+  m2, b02: |00000000000000000000000000000000| delays: -
+  m2, b03: |00000000000000000000000000000000| delays: -
+  m2, b04: |11111110000000000000000000000000| delays: 50+-50
+  m2, b05: |00000000011111111111100000000000| delays: 235+-96
+  m2, b06: |00000000000000000000000011111111| delays: 441+-70
+  m2, b07: |00000000000000000000000000000000| delays: -
+  best: m2, b05 delays: 235+-97
+  m3, b00: |00000000000000000000000000000000| delays: -
+  m3, b01: |00000000000000000000000000000000| delays: -
+  m3, b02: |00000000000000000000000000000000| delays: -
+  m3, b03: |00000000000000000000000000000000| delays: -
+  m3, b04: |11111111111100000000000000000000| delays: 93+-93
+  m3, b05: |00000000000000111111111111000000| delays: 313+-99
+  m3, b06: |00000000000000000000000000001111| delays: 480+-32
+  m3, b07: |00000000000000000000000000000000| delays: -
+  best: m3, b05 delays: 314+-99
+  m4, b00: |00000000000000000000000000000000| delays: -
+  m4, b01: |00000000000000000000000000000000| delays: -
+  m4, b02: |00000000000000000000000000000000| delays: -
+  m4, b03: |11100000000000000000000000000000| delays: 17+-17
+  m4, b04: |00001111111111111000000000000000| delays: 167+-105
+  m4, b05: |00000000000000000001111111111111| delays: 402+-100
+  m4, b06: |00000000000000000000000000000000| delays: -
+  m4, b07: |00000000000000000000000000000000| delays: -
+  best: m4, b04 delays: 166+-104
+  m5, b00: |00000000000000000000000000000000| delays: -
+  m5, b01: |00000000000000000000000000000000| delays: -
+  m5, b02: |00000000000000000000000000000000| delays: -
+  m5, b03: |00000000000000000000000000000000| delays: -
+  m5, b04: |11111111111110000000000000000000| delays: 99+-99
+  m5, b05: |00000000000000011111111111110000| delays: 333+-98
+  m5, b06: |00000000000000000000000000000011| delays: 493+-19
+  m5, b07: |00000000000000000000000000000000| delays: -
+  best: m5, b04 delays: 99+-99
+  m6, b00: |00000000000000000000000000000000| delays: -
+  m6, b01: |00000000000000000000000000000000| delays: -
+  m6, b02: |00000000000000000000000000000000| delays: -
+  m6, b03: |00000000000000000000000000000000| delays: -
+  m6, b04: |11111111110000000000000000000000| delays: 74+-74
+  m6, b05: |00000000000111111111111110000000| delays: 281+-107
+  m6, b06: |00000000000000000000000000111111| delays: 462+-50
+  m6, b07: |00000000000000000000000000000000| delays: -
+  best: m6, b05 delays: 280+-106
+  m7, b00: |00000000000000000000000000000000| delays: -
+  m7, b01: |00000000000000000000000000000000| delays: -
+  m7, b02: |00000000000000000000000000000000| delays: -
+  m7, b03: |00000000000000000000000000000000| delays: -
+  m7, b04: |11111110000000000000000000000000| delays: 54+-54
+  m7, b05: |00000000011111111111110000000000| delays: 241+-105
+  m7, b06: |00000000000000000000000011111111| delays: 440+-71
+  m7, b07: |00000000000000000000000000000000| delays: -
+  best: m7, b05 delays: 241+-103
+Switching SDRAM to hardware control.
+Memtest at 0x40000000 (2.0MiB)...
+  Write: 0x40000000-0x40200000 2.0MiB     
+   Read: 0x40000000-0x40200000 2.0MiB     
+Memtest OK
+Memspeed at 0x40000000 (Sequential, 2.0MiB)...
+  Write speed: 132.4MiB/s
+   Read speed: 109.3MiB/s
+
+--============== Boot ==================--
+Booting from serial...
+Press Q or ESC to abort boot completely.
+sL5DdSMmkekro
+[LITEX-TERM] Received firmware download request from the device.
+[LITEX-TERM] Uploading /home/asperkins42/CFU-Playground/proj/proj_template/build/software.bin to 0x40000000 (943808 bytes)...
+[LITEX-TERM] Upload calibration... (inter-frame: 10.00us, length: 64)
+[LITEX-TERM] Upload complete (158.6KB/s).
+[LITEX-TERM] Booting the device.
+[LITEX-TERM] Done.
+Executing booted program at 0x40000000
+
+--============= Liftoff! ===============--
+Hello, World!
+
+CFU Playground
+==============
+ 1: TfLM Models menu
+ 2: Functional CFU Tests
+ 3: Project menu
+ 4: Performance Counter Tests
+ 5: TFLite Unit Tests
+ 6: Benchmarks
+ 7: Util Tests
+ 8: Embench IoT
+ d: Donut demo
+main> 1
+
+Running TfLM Models menu
+
+TfLM Models
+===========
+ 1: Person Detection int8 model
+ x: eXit to previous menu
+models> 1
+
+Running Person Detection int8 model
+Error_reporter OK!
+Input: 9216 bytes, 4 dims: 1 96 96 1
+
+
+Tests for pdti8 model
+=====================
+ 1: Run with zeros input
+ 2: Run with no-person input
+ 3: Run with person input
+ g: Run golden tests (check for expected outputs)
+ x: eXit to previous menu
+pdti8> g
+
+Running Run golden tests (check for expected outputs)
+Zeroed 9216 bytes at 0x400ee560
+Running pdti8
+...............................
+"Event","Tag","Ticks"
+0,DEPTHWISE_CONV_2D,8701
+1,DEPTHWISE_CONV_2D,9066
+2,CONV_2D,14697
+3,DEPTHWISE_CONV_2D,5537
+4,CONV_2D,10231
+5,DEPTHWISE_CONV_2D,10223
+6,CONV_2D,14745
+7,DEPTHWISE_CONV_2D,2417
+8,CONV_2D,8219
+9,DEPTHWISE_CONV_2D,5040
+10,CONV_2D,13352
+11,DEPTHWISE_CONV_2D,1150
+12,CONV_2D,6737
+13,DEPTHWISE_CONV_2D,2278
+14,CONV_2D,12947
+15,DEPTHWISE_CONV_2D,2647
+16,CONV_2D,13559
+17,DEPTHWISE_CONV_2D,2334
+18,CONV_2D,12714
+19,DEPTHWISE_CONV_2D,2906
+20,CONV_2D,12783
+21,DEPTHWISE_CONV_2D,2219
+22,CONV_2D,12859
+23,DEPTHWISE_CONV_2D,630
+24,CONV_2D,6169
+25,DEPTHWISE_CONV_2D,1073
+26,CONV_2D,12243
+27,AVERAGE_POOL_2D,49
+28,CONV_2D,14
+29,RESHAPE,1
+30,SOFTMAX,8
+Perf counters not enabled.
+   213M (    212566875 )  cycles total
+Copied 9216 bytes at 0x400ee560
+Running pdti8
+...............................
+"Event","Tag","Ticks"
+0,DEPTHWISE_CONV_2D,8687
+1,DEPTHWISE_CONV_2D,9071
+2,CONV_2D,14702
+3,DEPTHWISE_CONV_2D,5542
+4,CONV_2D,10220
+5,DEPTHWISE_CONV_2D,10225
+6,CONV_2D,14718
+7,DEPTHWISE_CONV_2D,2415
+8,CONV_2D,8193
+9,DEPTHWISE_CONV_2D,5038
+10,CONV_2D,13349
+11,DEPTHWISE_CONV_2D,1149
+12,CONV_2D,6725
+13,DEPTHWISE_CONV_2D,2280
+14,CONV_2D,12942
+15,DEPTHWISE_CONV_2D,2646
+16,CONV_2D,13557
+17,DEPTHWISE_CONV_2D,2334
+18,CONV_2D,12711
+19,DEPTHWISE_CONV_2D,2907
+20,CONV_2D,12781
+21,DEPTHWISE_CONV_2D,2219
+22,CONV_2D,12859
+23,DEPTHWISE_CONV_2D,630
+24,CONV_2D,6168
+25,DEPTHWISE_CONV_2D,1076
+26,CONV_2D,12238
+27,AVERAGE_POOL_2D,48
+28,CONV_2D,14
+29,RESHAPE,2
+30,SOFTMAX,8
+Perf counters not enabled.
+   212M (    212472522 )  cycles total
+Copied 9216 bytes at 0x400ee560
+Running pdti8
+...............................
+"Event","Tag","Ticks"
+0,DEPTHWISE_CONV_2D,8686
+1,DEPTHWISE_CONV_2D,9072
+2,CONV_2D,14702
+3,DEPTHWISE_CONV_2D,5540
+4,CONV_2D,10224
+5,DEPTHWISE_CONV_2D,10225
+6,CONV_2D,14718
+7,DEPTHWISE_CONV_2D,2415
+8,CONV_2D,8195
+9,DEPTHWISE_CONV_2D,5039
+10,CONV_2D,13350
+11,DEPTHWISE_CONV_2D,1150
+12,CONV_2D,6728
+13,DEPTHWISE_CONV_2D,2279
+14,CONV_2D,12943
+15,DEPTHWISE_CONV_2D,2645
+16,CONV_2D,13558
+17,DEPTHWISE_CONV_2D,2335
+18,CONV_2D,12711
+19,DEPTHWISE_CONV_2D,2910
+20,CONV_2D,12782
+21,DEPTHWISE_CONV_2D,2219
+22,CONV_2D,12856
+23,DEPTHWISE_CONV_2D,629
+24,CONV_2D,6165
+25,DEPTHWISE_CONV_2D,1075
+26,CONV_2D,12237
+27,AVERAGE_POOL_2D,48
+28,CONV_2D,14
+29,RESHAPE,2
+30,SOFTMAX,8
+Perf counters not enabled.
+   212M (    212476908 )  cycles total
+OK   Golden tests passed
+---
+
+Tests for pdti8 model
+=====================
+ 1: Run with zeros input
+ 2: Run with no-person input
+ 3: Run with person input
+ g: Run golden tests (check for expected outputs)
+ x: eXit to previous menu
+pdti8> 
 ```
 
 ## Important things to note
