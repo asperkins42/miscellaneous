@@ -671,6 +671,19 @@ echo "  Amaranth:     "(python3 -c "import amaranth; print('found at '+amaranth.
 echo "  Yosys:        "(which yosys)
 echo ""
 ```
+Finally, once setup is complete, this is all you should need to do to program the FPGA again (with the basic implementation)
+```
+fish
+bass module load vitis/2020.2
+cd CFU-Playground
+source vivado-2020.2.fish									# this will likely be different for you
+source amaranth/bin/activate.fish
+cd proj/proj_template
+make clean TARGET=xilinx_alveo_u280
+make prog TARGET=xilinx_alveo_u280 USE_VIVADO=1 EXTRA_LITEX_ARGS="--sys-clk-freq 100e6"		# there are still timing issues 
+make load TARGET=xilinx_alveo_u280 BUILD_JOBS=4 TTY=/dev/ttyUSB2
+	"ENTER" or "reboot" 									# if needed once flashed		
+```
 
 
 
