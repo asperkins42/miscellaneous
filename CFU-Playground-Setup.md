@@ -58,7 +58,7 @@ I got around this by creating a virtual environment called "amaranth" and instal
 python3 -m venv amaranth
 
 # Activate it
-source amaranth/bin/activate
+source amaranth/bin/activate.fish
 
 # Install your package inside this venv
 pip install amaranth-yosys
