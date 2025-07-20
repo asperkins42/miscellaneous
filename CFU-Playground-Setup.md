@@ -621,6 +621,26 @@ Tests for pdti8 model
 pdti8> 
 ```
 
+## Custom code on CFU-Playground
+
+CFU Playground builds projects by overlaying a project-specific directory onto a common source directory. Many sources claim that custom code can be run by modifying the source files in the project directory. At compilation, if a file in the project-specific directory has the same name as one in the common directory, the project-specific one is used. 
+
+This has been quite a struggle to get past, as it is not working the way that it should. I have modified the files to include a new menu option, one that allows a small matrix multiplication kernel to be run. This code is proven to be in the final .elf file that is compiled (shown below), but when I load the .bin file onto the U280, the menu option is not there. 
+
+```
+(amaranth) asperkins42@milan3:~/C/p/my_sparse_project (main *%=)$ riscv64-unknown-elf-nm build/software.elf | grep do_sparse_mm                                                       1 ↵ <- 0s072 |  7:24PM
+
+40001884 t _ZN12_GLOBAL__N_112do_sparse_mmEv
+(amaranth) asperkins42@milan3:~/C/p/my_sparse_project (main *%=)$ cat build/src/proj_menu.cc | grep MENU_ITEM                                                                             <- 0s013 |  7:25PM
+        MENU_ITEM('0', "exercise cfu op0", do_exercise_cfu_op0),
+        MENU_ITEM('h', "say Hello", do_hello_world),
+        MENU_ITEM('1', "run sparse matrix multiplication", do_sparse_mm),
+```
+
+The first command shown searches the software.elf file for the "do_sparse_mm" string, showing that the updated code with that function is compiled into the .elf file. The second command searches the proj_menu file to see all included menu options.
+
+I am now trying a new approach where I change the main.c file in the common/src directory itself. I believe that if I modify this file, when it is compiled, the new code should print instead of the menu program. If this works, I can simply put the matrix multiplication kernel there instead. 
+
 ## Important things to note
 
 * Pretty sure that I cannot run two virtual environments at once. Either amaranth needs to be installed to the LiteX one or I just don't use amaranth and use Verilog instead.
