@@ -625,21 +625,17 @@ pdti8>
 
 CFU Playground builds projects by overlaying a project-specific directory onto a common source directory. Many sources claim that custom code can be run by modifying the source files in the project directory. At compilation, if a file in the project-specific directory has the same name as one in the common directory, the project-specific one is used. 
 
-This has been quite a struggle to get past, as it is not working the way that it should. I have modified the files to include a new menu option, one that allows a small matrix multiplication kernel to be run. This code is proven to be in the final .elf file that is compiled (shown below), but when I load the .bin file onto the U280, the menu option is not there. 
+I struggled with this for a while, but Aaron helped me get it all figured out. At one point, I ran `make prog TARGET=xilinx_alveo_u280 USE_VIVADO=1 IGNORE_TIMING=1` which allowed the bitstream to be flashed to the board. After this, when I would try to resynthesize the bitstream and load it onto the FPGA, I did not add the IGNORE_TIMING flag. The synthesis would run, and it appeared to me that the bitstream was being programmed, but it never actually opened the hardware connection and reprogrammed the bitstream. Adding this flag back in allows the bitstream to successfully load to the board. 
 
 ```
-(amaranth) asperkins42@milan3:~/C/p/my_sparse_project (main *%=)$ riscv64-unknown-elf-nm build/software.elf | grep do_sparse_mm                                                       1 ↵ <- 0s072 |  7:24PM
-
-40001884 t _ZN12_GLOBAL__N_112do_sparse_mmEv
-(amaranth) asperkins42@milan3:~/C/p/my_sparse_project (main *%=)$ cat build/src/proj_menu.cc | grep MENU_ITEM                                                                             <- 0s013 |  7:25PM
-        MENU_ITEM('0', "exercise cfu op0", do_exercise_cfu_op0),
-        MENU_ITEM('h', "say Hello", do_hello_world),
-        MENU_ITEM('1', "run sparse matrix multiplication", do_sparse_mm),
+make prog TARGET=xilinx_alveo_u280 USE_VIVADO=1 IGNORE_TIMING=1
+make load TARGET=xilinx_alveo_u280
+// Press ENTER once the binary is loaded - it may take a little bit.
 ```
 
-The first command shown searches the software.elf file for the "do_sparse_mm" string, showing that the updated code with that function is compiled into the .elf file. The second command searches the proj_menu file to see all included menu options.
 
-I am now trying a new approach where I change the main.c file in the common/src directory itself. I believe that if I modify this file, when it is compiled, the new code should print instead of the menu program. If this works, I can simply put the matrix multiplication kernel there instead. 
+Not 100% sure how this affects the loading of the .bin file, but it did. Now the flow looks like this.
+
 
 ## Important things to note
 
