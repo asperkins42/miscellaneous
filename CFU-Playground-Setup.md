@@ -625,16 +625,397 @@ pdti8>
 
 CFU Playground builds projects by overlaying a project-specific directory onto a common source directory. Many sources claim that custom code can be run by modifying the source files in the project directory. At compilation, if a file in the project-specific directory has the same name as one in the common directory, the project-specific one is used. 
 
-I struggled with this for a while, but Aaron helped me get it all figured out. At one point, I ran `make prog TARGET=xilinx_alveo_u280 USE_VIVADO=1 IGNORE_TIMING=1` which allowed the bitstream to be flashed to the board. After this, when I would try to resynthesize the bitstream and load it onto the FPGA, I did not add the IGNORE_TIMING flag. The synthesis would run, and it appeared to me that the bitstream was being programmed, but it never actually opened the hardware connection and reprogrammed the bitstream. Adding this flag back in allows the bitstream to successfully load to the board. 
+I struggled with this for a while, but Aaron helped me get it all figured out. At one point, I ran `make prog TARGET=xilinx_alveo_u280 USE_VIVADO=1 IGNORE_TIMING=1` which allowed the bitstream to be flashed to the board. After this, when I would try to resynthesize the bitstream and load it onto the FPGA, I did not add the IGNORE_TIMING flag. The synthesis would run, and it appeared to me that the bitstream was being programmed, but it never actually opened the hardware connection and reprogrammed the bitstream. Adding this flag back in allows the bitstream to successfully load to the board. Not 100% sure how this affects the loading of the .bin file, but it did. Now the flow looks like this.
+
 
 ```
-make prog TARGET=xilinx_alveo_u280 USE_VIVADO=1 IGNORE_TIMING=1
-make load TARGET=xilinx_alveo_u280
-// Press ENTER once the binary is loaded - it may take a little bit.
+asperkins42@milan3:~$ fish
+
+Welcome to fish, the friendly interactive shell
+asperkins42@milan3:~$ bass module load vitis/2020.2                                                                                                                                            <-  |  7:44PM                 
+asperkins42@milan3:~/C/p/my_sparse_project (main *%=)$ source ~/likelyImportant/source-me.fish                                                                                            <- 0s001 |  7:47PM
+
+✅ Environment loaded:
+  Vivado:       /auto/software/swtree/ubuntu22.04/x86_64/Xilinx/Vivado/2020.2/bin/vivado
+  Vitis:        /auto/software/swtree/ubuntu22.04/x86_64/Xilinx/Vitis/2020.2/bin/vitis
+  XRT:          /opt/xilinx/xrt/bin/xbutil
+  RISC-V GCC:   /home/asperkins42/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc
+
+  Amaranth:     found at /home/asperkins42/CFU-Playground/amaranth/lib/python3.12/site-packages/amaranth/__init__.py
+  Yosys:        /usr/bin/yosys
+
+(amaranth) asperkins42@milan3:~/C/p/my_sparse_project (main *%=)$ make prog TARGET=xilinx_alveo_u280 USE_VIVADO=1 IGNORE_TIMING=1                                                         <- 0s492 |  7:48PM
+/home/asperkins42/CFU-Playground/scripts/pyrun /home/asperkins42/CFU-Playground/proj/my_sparse_project/cfu_gen.py 
+make -C /home/asperkins42/CFU-Playground/soc -f /home/asperkins42/CFU-Playground/soc/common_soc.mk prog
+make[1]: Entering directory '/home/asperkins42/CFU-Playground/soc'
+Vivado timing check is skipped.
+Loading bitstream onto board
+MAKEFLAGS=-j8 /home/asperkins42/CFU-Playground/scripts/pyrun ./common_soc.py --output-dir build/xilinx_alveo_u280.my_sparse_project --csr-json build/xilinx_alveo_u280.my_sparse_project/csr.json --cpu-cfu  /home/asperkins42/CFU-Playground/proj/my_sparse_project/cfu.v --uart-baudrate 1843200 --target xilinx_alveo_u280  --toolchain vivado --no-compile-software --load
+make_soc: cpu_variant is full+cfu
+Variant "full+cfu" already known.
+INFO:USMMCM:Creating USMMCM, speedgrade -2.
+INFO:USMMCM:Registering Differential ClkIn of 100.00MHz.
+INFO:USMMCM:Creating ClkOut0 pll4x of 600.00MHz (+-10000.00ppm).
+INFO:USMMCM:Creating ClkOut1 idelay of 600.00MHz (+-10000.00ppm).
+INFO:SoC:        __   _ __      _  __  
+INFO:SoC:       / /  (_) /____ | |/_/  
+INFO:SoC:      / /__/ / __/ -_)>  <    
+INFO:SoC:     /____/_/\__/\__/_/|_|  
+INFO:SoC:  Build your hardware, easily!
+INFO:SoC:--------------------------------------------------------------------------------
+INFO:SoC:Creating SoC... (2025-07-23 19:48:23)
+INFO:SoC:--------------------------------------------------------------------------------
+INFO:SoC:FPGA device : xcu280-fsvh2892-2L-e.
+INFO:SoC:System clock: 150.000MHz.
+INFO:SoCBusHandler:Creating Bus Handler...
+INFO:SoCBusHandler:32-bit wishbone Bus, 4.0GiB Address Space.
+INFO:SoCBusHandler:Adding reserved Bus Regions...
+INFO:SoCBusHandler:Bus Handler created.
+INFO:SoCCSRHandler:Creating CSR Handler...
+INFO:SoCCSRHandler:32-bit CSR Bus, 32-bit Aligned, 16.0KiB Address Space, 2048B Paging, big Ordering (Up to 32 Locations).
+INFO:SoCCSRHandler:Adding reserved CSRs...
+INFO:SoCCSRHandler:CSR Handler created.
+INFO:SoCIRQHandler:Creating IRQ Handler...
+INFO:SoCIRQHandler:IRQ Handler (up to 32 Locations).
+INFO:SoCIRQHandler:Adding reserved IRQs...
+INFO:SoCIRQHandler:IRQ Handler created.
+INFO:SoC:--------------------------------------------------------------------------------
+INFO:SoC:Initial SoC:
+INFO:SoC:--------------------------------------------------------------------------------
+INFO:SoC:32-bit wishbone Bus, 4.0GiB Address Space.
+INFO:SoC:32-bit CSR Bus, 32-bit Aligned, 16.0KiB Address Space, 2048B Paging, big Ordering (Up to 32 Locations).
+INFO:SoC:IRQ Handler (up to 32 Locations).
+INFO:SoC:--------------------------------------------------------------------------------
+INFO:SoC:Controller ctrl added.
+INFO:SoC:CPU vexriscv added.
+INFO:SoC:CPU vexriscv adding IO Region 0 at 0x80000000 (Size: 0x80000000).
+INFO:SoCBusHandler:io0 Region added at Origin: 0x80000000, Size: 0x80000000, Mode: RW, Cached: False Linker: False.
+INFO:SoC:CPU vexriscv overriding sram mapping from 0x01000000 to 0x10000000.
+INFO:SoC:CPU vexriscv setting reset address to 0x00000000.
+INFO:SoC:CPU vexriscv adding Bus Master(s).
+INFO:SoCBusHandler:cpu_bus0 added as Bus Master.
+INFO:SoCBusHandler:cpu_bus1 added as Bus Master.
+INFO:SoC:CPU vexriscv adding Interrupt(s).
+INFO:SoC:CPU vexriscv adding SoC components.
+INFO:SoCBusHandler:rom Region added at Origin: 0x00000000, Size: 0x00020000, Mode: R, Cached: True Linker: False.
+INFO:SoCBusHandler:rom added as Bus Slave.
+INFO:SoC:RAM rom added Origin: 0x00000000, Size: 0x00020000, Mode: R, Cached: True Linker: False.
+INFO:SoCBusHandler:sram Region added at Origin: 0x10000000, Size: 0x00002000, Mode: RW, Cached: True Linker: False.
+INFO:SoCBusHandler:sram added as Bus Slave.
+INFO:SoC:RAM sram added Origin: 0x10000000, Size: 0x00002000, Mode: RW, Cached: True Linker: False.
+INFO:SoCIRQHandler:uart IRQ allocated at Location 0.
+INFO:SoCIRQHandler:timer0 IRQ allocated at Location 1.
+INFO:SoCBusHandler:main_ram Region added at Origin: 0x40000000, Size: 0x40000000, Mode: RW, Cached: True Linker: False.
+INFO:SoCBusHandler:main_ram added as Bus Slave.
+INFO:SoCBusHandler:firmware_ram Region added at Origin: 0x20000000, Size: 0x00008000, Mode: RW, Cached: True Linker: False.
+INFO:SoCBusHandler:firmware_ram added as Bus Slave.
+INFO:SoC:RAM firmware_ram added Origin: 0x20000000, Size: 0x00008000, Mode: RW, Cached: True Linker: False.
+INFO:SoC:CSR Bridge csr added.
+INFO:SoCBusHandler:csr Region added at Origin: 0xf0000000, Size: 0x00010000, Mode: RW, Cached: False Linker: False.
+INFO:SoCBusHandler:csr added as Bus Slave.
+INFO:SoCCSRHandler:csr added as CSR Master.
+INFO:SoCBusHandler:Interconnect: InterconnectShared (2 <-> 5).
+INFO:SoCCSRHandler:ctrl CSR allocated at Location 0.
+INFO:SoCCSRHandler:ddrphy CSR allocated at Location 1.
+INFO:SoCCSRHandler:identifier_mem CSR allocated at Location 2.
+INFO:SoCCSRHandler:sdram CSR allocated at Location 3.
+INFO:SoCCSRHandler:timer0 CSR allocated at Location 4.
+INFO:SoCCSRHandler:uart CSR allocated at Location 5.
+INFO:SoC:--------------------------------------------------------------------------------
+INFO:SoC:Finalized SoC:
+INFO:SoC:--------------------------------------------------------------------------------
+INFO:SoC:32-bit wishbone Bus, 4.0GiB Address Space.
+IO Regions: (1)
+io0                 : Origin: 0x80000000, Size: 0x80000000, Mode: RW, Cached: False Linker: False
+Bus Regions: (5)
+rom                 : Origin: 0x00000000, Size: 0x00020000, Mode: R, Cached: True Linker: False
+sram                : Origin: 0x10000000, Size: 0x00002000, Mode: RW, Cached: True Linker: False
+firmware_ram        : Origin: 0x20000000, Size: 0x00008000, Mode: RW, Cached: True Linker: False
+main_ram            : Origin: 0x40000000, Size: 0x40000000, Mode: RW, Cached: True Linker: False
+csr                 : Origin: 0xf0000000, Size: 0x00010000, Mode: RW, Cached: False Linker: False
+Bus Masters: (2)
+- cpu_bus0
+- cpu_bus1
+Bus Slaves: (5)
+- rom
+- sram
+- main_ram
+- firmware_ram
+- csr
+INFO:SoC:32-bit CSR Bus, 32-bit Aligned, 16.0KiB Address Space, 2048B Paging, big Ordering (Up to 32 Locations).
+CSR Locations: (6)
+- ctrl           : 0
+- ddrphy         : 1
+- identifier_mem : 2
+- sdram          : 3
+- timer0         : 4
+- uart           : 5
+INFO:SoC:IRQ Handler (up to 32 Locations).
+IRQ Locations: (2)
+- uart   : 0
+- timer0 : 1
+INFO:SoC:--------------------------------------------------------------------------------
+INFO:USMMCM:Config:
+divclk_divide : 1
+clkout0_freq  : 600.00MHz
+clkout0_divide: 2
+clkout0_phase : 0.00°
+clkout1_freq  : 600.00MHz
+clkout1_divide: 2
+clkout1_phase : 0.00°
+vco           : 1200.00MHz
+clkfbout_mult : 12
+
+****** Vivado v2020.2 (64-bit)
+  **** SW Build 3064766 on Wed Nov 18 09:12:47 MST 2020
+  **** IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+    ** Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+
+WARNING: 'open_hw' is deprecated, please use 'open_hw_manager' instead.
+open_hw_manager
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-2222] Launching hw_server...
+INFO: [Labtools 27-2221] Launch Output:
+
+****** Xilinx hw_server v2020.2
+  **** Build date : Nov 18 2020 at 09:50:49
+    ** Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+
+
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:3042
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+
+
+******** Xilinx cs_server v2020.2
+  ****** Build date   : Nov 03 2020-16:02:56
+    **** Build number : 2020.2.1604437376
+      ** Copyright 2017-2020 Xilinx, Inc. All Rights Reserved.
+
+
+
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/21770326D02MA
+INFO: [Labtools 27-3164] End of startup status: HIGH
+program_hw_devices: Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 2411.098 ; gain = 0.000 ; free physical = 941749 ; free virtual = 1033455
+INFO: [Labtools 27-1434] Device xcu280_u55c (JTAG device index = 0) is programmed with a design that has no supported debug core(s) in it.
+INFO: [Common 17-206] Exiting Vivado at Wed Jul 23 19:49:00 2025...
+make[1]: Leaving directory '/home/asperkins42/CFU-Playground/soc'
+(amaranth) asperkins42@milan3:~/C/p/my_sparse_project (main *%=)$ make load TARGET=xilinx_alveo_u280 BUILD_JOBS=4 TTY=/dev/ttyUSB2                                                  127 ↵ <- 0s136 |  7:50PM
+/home/asperkins42/CFU-Playground/scripts/pyrun /home/asperkins42/CFU-Playground/proj/my_sparse_project/cfu_gen.py 
+make -C /home/asperkins42/CFU-Playground/soc -f /home/asperkins42/CFU-Playground/soc/common_soc.mk litex-software
+make[1]: Entering directory '/home/asperkins42/CFU-Playground/soc'
+make[1]: Nothing to be done for 'litex-software'.
+make[1]: Leaving directory '/home/asperkins42/CFU-Playground/soc'
+Copying tflite-micro files
+for d in tensorflow/lite tensorflow/lite/c tensorflow/lite/core/api tensorflow/lite/core/c tensorflow/lite/kernels tensorflow/lite/kernels/internal tensorflow/lite/kernels/internal/optimized tensorflow/lite/kernels/internal/reference tensorflow/lite/kernels/internal/reference/integer_ops tensorflow/lite/micro tensorflow/lite/micro/kernels tensorflow/lite/micro/memory_planner tensorflow/lite/micro/arena_allocator tensorflow/lite/micro/tflite_bridge tensorflow/lite/schema; do \
+	mkdir -p /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/$d; \
+	/bin/cp -a `find /home/asperkins42/CFU-Playground/third_party/tflite-micro/$d -maxdepth 1 -type f -not -name '*_test*' -regex '.*\.\(h\|c\|cc\)'` /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/$d; \
+done
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/tflite-micro/tensorflow/lite/micro/kernels/conv_test* /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/tensorflow/lite/micro/kernels
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/tflite-micro/tensorflow/lite/micro/kernels/depthwise_conv_test* /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/tensorflow/lite/micro/kernels
+/bin/cp: missing destination file operand after '/home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/tensorflow/lite/micro/models'
+Try '/bin/cp --help' for more information.
+mkdir -p /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/tensorflow/lite/micro/examples/person_detection
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/tflite-micro/tensorflow/lite/micro/examples/person_detection/model_settings* /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/tensorflow/lite/micro/examples/person_detection
+TfLM: copying selected third_party files
+mkdir -p /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/third_party/gemmlowp
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/tflite-micro/third_party/gemmlowp/fixedpoint /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/third_party/gemmlowp
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/tflite-micro/third_party/gemmlowp/internal /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/third_party/internal
+mkdir -p /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/third_party/flatbuffers/include
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/tflite-micro/third_party/flatbuffers/include/* /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/third_party/flatbuffers/include
+mkdir -p /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/third_party/ruy/ruy/profiler
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/tflite-micro/third_party/ruy/ruy/profiler/instrumentation.h /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src/third_party/ruy/ruy/profiler
+build-dir: copying source to build dir
+/bin/cp -a /home/asperkins42/CFU-Playground/common/*              /home/asperkins42/CFU-Playground/proj/my_sparse_project/build
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/mlcommons/*       /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/SaxonSoc/riscv.h     /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src
+/bin/cp -a /home/asperkins42/CFU-Playground/third_party/litex-donut/donut.*     /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src
+/bin/cp -a /home/asperkins42/CFU-Playground/proj/my_sparse_project/src/*                 /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/src
+/bin/rm -rf			             /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/_*
+make -C /home/asperkins42/CFU-Playground/proj/my_sparse_project/build all -j 4
+make[1]: Entering directory '/home/asperkins42/CFU-Playground/proj/my_sparse_project/build'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/asperkins42/CFU-Playground/proj/my_sparse_project/build'
+Running interactively on FPGA Board
+make -C /home/asperkins42/CFU-Playground/soc -f /home/asperkins42/CFU-Playground/soc/common_soc.mk load_hook
+make[1]: Entering directory '/home/asperkins42/CFU-Playground/soc'
+MAKEFLAGS=-j8 /home/asperkins42/CFU-Playground/scripts/pyrun ./common_soc.py --output-dir build/xilinx_alveo_u280.my_sparse_project --csr-json build/xilinx_alveo_u280.my_sparse_project/csr.json --cpu-cfu  /home/asperkins42/CFU-Playground/proj/my_sparse_project/cfu.v --uart-baudrate 1843200 --target xilinx_alveo_u280  --software-load --software-path /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/software.bin
+make[1]: Leaving directory '/home/asperkins42/CFU-Playground/soc'
+/home/asperkins42/CFU-Playground/soc/bin/litex_term --speed 1843200  --kernel /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/software.bin /dev/ttyUSB2
+[PRESS ENTER HERE]
+litex> reboot
+
+        __   _ __      _  __
+       / /  (_) /____ | |/_/
+      / /__/ / __/ -_)>  <
+     /____/_/\__/\__/_/|_|
+   Build your hardware, easily!
+
+ (c) Copyright 2012-2022 Enjoy-Digital
+ (c) Copyright 2007-2015 M-Labs
+
+ BIOS built on Jul 20 2025 15:25:04
+ BIOS CRC passed (e91ddc44)
+
+ LiteX git sha1: b9a1fec30
+
+--=============== SoC ==================--
+CPU:		VexRiscv_FullCfu @ 150MHz
+BUS:		WISHBONE 32-bit @ 4GiB
+CSR:		32-bit data
+ROM:		128KiB
+SRAM:		8KiB
+L2:		8KiB
+SDRAM:		1048576KiB 64-bit @ 1200MT/s (CL-9 CWL-9)
+
+--========== Initialization ============--
+Initializing SDRAM @0x40000000...
+Switching SDRAM to software control.
+Write leveling:
+  tCK equivalent taps: 464
+  Cmd/Clk scan (0-232)
+  |0111  |00010  |00000  |00000| best: 0
+  Setting Cmd/Clk delay to 0 taps.
+  Data scan:
+  m0: |1111111111100000000000000| delay: 00
+  m1: |1111111111100000000000001| delay: 00
+  m2: |1111111000000000000011111| delay: -
+  m3: |1111110000000000000111111| delay: 304
+  m4: |1100000000000000111111111| delay: 248
+  m5: |1111111000000000000011111| delay: -
+  m6: |1111111110000000000000111| delay: 00
+  m7: |1111111111100000000000001| delay: 00
+Write latency calibration:
+m0:6 m1:6 m2:6 m3:0 m4:0 m5:6 m6:6 m7:6 
+Read leveling:
+  m0, b00: |00000000000000000000000000000000| delays: -
+  m0, b01: |00000000000000000000000000000000| delays: -
+  m0, b02: |00000000000000000000000000000000| delays: -
+  m0, b03: |00000000000000000000000000000000| delays: -
+  m0, b04: |11000000000000000000000000000000| delays: 16+-16
+  m0, b05: |00001111111111111000000000000000| delays: 164+-99
+  m0, b06: |00000000000000000001111111111110| delays: 397+-98
+  m0, b07: |00000000000000000000000000000000| delays: -
+  best: m0, b06 delays: 396+-100
+  m1, b00: |00000000000000000000000000000000| delays: -
+  m1, b01: |00000000000000000000000000000000| delays: -
+  m1, b02: |00000000000000000000000000000000| delays: -
+  m1, b03: |00000000000000000000000000000000| delays: -
+  m1, b04: |11111100000000000000000000000000| delays: 46+-46
+  m1, b05: |00000000011111111111000000000000| delays: 226+-93
+  m1, b06: |00000000000000000000000111111111| delays: 438+-73
+  m1, b07: |00000000000000000000000000000000| delays: -
+  best: m1, b05 delays: 225+-95
+  m2, b00: |00000000000000000000000000000000| delays: -
+  m2, b01: |00000000000000000000000000000000| delays: -
+  m2, b02: |00000000000000000000000000000000| delays: -
+  m2, b03: |00000000000000000000000000000000| delays: -
+  m2, b04: |11111110000000000000000000000000| delays: 48+-48
+  m2, b05: |00000000011111111111100000000000| delays: 232+-98
+  m2, b06: |00000000000000000000000111111111| delays: 438+-73
+  m2, b07: |00000000000000000000000000000000| delays: -
+  best: m2, b05 delays: 233+-99
+  m3, b00: |00000000000000000000000000000000| delays: -
+  m3, b01: |00000000000000000000000000000000| delays: -
+  m3, b02: |00000000000000000000000000000000| delays: -
+  m3, b03: |00000000000000000000000000000000| delays: -
+  m3, b04: |11111111111100000000000000000000| delays: 91+-91
+  m3, b05: |00000000000000111111111111000000| delays: 311+-97
+  m3, b06: |00000000000000000000000000001111| delays: 479+-33
+  m3, b07: |00000000000000000000000000000000| delays: -
+  best: m3, b05 delays: 310+-100
+  m4, b00: |00000000000000000000000000000000| delays: -
+  m4, b01: |00000000000000000000000000000000| delays: -
+  m4, b02: |00000000000000000000000000000000| delays: -
+  m4, b03: |11100000000000000000000000000000| delays: 17+-17
+  m4, b04: |00001111111111111000000000000000| delays: 161+-101
+  m4, b05: |00000000000000000001111111111111| delays: 399+-102
+  m4, b06: |00000000000000000000000000000000| delays: -
+  m4, b07: |00000000000000000000000000000000| delays: -
+  best: m4, b05 delays: 398+-102
+  m5, b00: |00000000000000000000000000000000| delays: -
+  m5, b01: |00000000000000000000000000000000| delays: -
+  m5, b02: |00000000000000000000000000000000| delays: -
+  m5, b03: |00000000000000000000000000000000| delays: -
+  m5, b04: |11111111111110000000000000000000| delays: 99+-99
+  m5, b05: |00000000000000011111111111100000| delays: 332+-96
+  m5, b06: |00000000000000000000000000000011| delays: 493+-18
+  m5, b07: |00000000000000000000000000000000| delays: -
+  best: m5, b04 delays: 99+-99
+  m6, b00: |00000000000000000000000000000000| delays: -
+  m6, b01: |00000000000000000000000000000000| delays: -
+  m6, b02: |00000000000000000000000000000000| delays: -
+  m6, b03: |00000000000000000000000000000000| delays: -
+  m6, b04: |11111111110000000000000000000000| delays: 74+-74
+  m6, b05: |00000000000111111111111100000000| delays: 279+-103
+  m6, b06: |00000000000000000000000000111111| delays: 462+-50
+  m6, b07: |00000000000000000000000000000000| delays: -
+  best: m6, b05 delays: 277+-103
+  m7, b00: |00000000000000000000000000000000| delays: -
+  m7, b01: |00000000000000000000000000000000| delays: -
+  m7, b02: |00000000000000000000000000000000| delays: -
+  m7, b03: |00000000000000000000000000000000| delays: -
+  m7, b04: |11111110000000000000000000000000| delays: 54+-54
+  m7, b05: |00000000011111111111110000000000| delays: 238+-102
+  m7, b06: |00000000000000000000000111111111| delays: 440+-72
+  m7, b07: |00000000000000000000000000000000| delays: -
+  best: m7, b05 delays: 239+-101
+Switching SDRAM to hardware control.
+Memtest at 0x40000000 (2.0MiB)...
+  Write: 0x40000000-0x40200000 2.0MiB     
+   Read: 0x40000000-0x40200000 2.0MiB     
+Memtest OK
+Memspeed at 0x40000000 (Sequential, 2.0MiB)...
+  Write speed: 132.4MiB/s
+   Read speed: 109.3MiB/s
+
+--============== Boot ==================--
+Booting from serial...
+Press Q or ESC to abort boot completely.
+sL5DdSMmkekro
+[LITEX-TERM] Received firmware download request from the device.
+[LITEX-TERM] Uploading /home/asperkins42/CFU-Playground/proj/my_sparse_project/build/software.bin to 0x40000000 (944104 bytes)...
+[LITEX-TERM] Upload calibration... (inter-frame: 10.00us, length: 64)
+[LITEX-TERM] Upload complete (158.7KB/s).
+[LITEX-TERM] Booting the device.
+[LITEX-TERM] Done.
+Executing booted program at 0x40000000
+
+--============= Liftoff! ===============--
+Hello, World!
+
+CFU Playground
+==============
+ 1: TfLM Models menu
+ 2: Functional CFU Tests
+ 3: Project menu
+ 4: Performance Counter Tests
+ 5: TFLite Unit Tests
+ 6: Benchmarks
+ 7: Util Tests
+ 8: Embench IoT
+ d: Donut demo
+main> 3
+
+Running Project menu
+
+Project Menu
+============
+ 0: exercise cfu op0
+ h: say Hello
+ m: run sparse matrix multiplication
+project> m
+
+Running run sparse matrix multiplication
+
+Running sparse matrix multiplication demo
+
+Result C =
+   5    0   14 
+   0   18    0 
+   0    0   28 
+---
 ```
-
-
-Not 100% sure how this affects the loading of the .bin file, but it did. Now the flow looks like this.
 
 
 ## Important things to note
