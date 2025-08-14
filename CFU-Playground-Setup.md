@@ -1,17 +1,265 @@
 ## CFU Playground setup for ArtyA7
 
-I began by following the [setup guide] (https://cfu-playground.readthedocs.io/en/latest/setup-guide.html) for CFU-Playground.
-Step 1 was easy, given that the Arty A7 was already connected to zenith2. I setup [FoxyProxy] (https://docs.excl.ornl.gov/quick-start-guides/excl-remote-development#setup-foxyproxy) and [ThinLinc] (https://docs.excl.ornl.gov/~/revisions/tgK4OWTltCS04RkJelGW/quick-start-guides/thinlinc) so that I could access 
-the GUI for zenith2. (Be sure that FoxyProxy is set to "Proxy by Pattern" and everything should work if you follow the tutorials linked.)
+```
 
-Step 2 is to clone the repository using `git clone https://github.com/google/CFU-Playground.git`.
+$ source /opt/Xilinx/Vivado/202x.x/settings64.sh
+								# or wherever your Vivado is installed to
+$ sudo apt-get update
+$ sudo apt-get install -y git python3 python3-pip python3-venv build-essential
 
-Once that has been run, begin Step 3 by running `cd CFU-Playground` and run the setup script `./scripts/setup`. 
+$ git clone https://github.com/google/CFU-Playground.git
+$ cd CFU-Playground
+$ ./scripts/setup
 
-Afterward, run `pip install amaranth-yosys` to install Amaranth, which is what we will use to build CFUs. 
+$ cd ~
+								# Put the tarball in ~/Downloads first; pick the exact filename you downloaded
+$ tar xvfz ~/Downloads/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14.tar.gz
+$ echo 'export PATH="$PATH:$HOME/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14/bin"' >> ~/.bashrc
+$ source ~/.bashrc
 
-Step 4 involves toolchain setup. For the ArtyA7, you can use step 4a which is `make install-sf` then, when that finishes `make enter-sf`. 
-When you are building the bitsream later, to use Symbiflow, you must add `USE_SYMBIFLOW` to the end of the command. 
+which riscv64-unknown-elf-gcc   # should print a path
+ls /dev/ttyUSB*                 # Arty’s USB-UART usually shows here when plugged
+
+								# Always ensure Vivado is on PATH first in this shell
+$ source /opt/Xilinx/Vivado/202x.x/settings64.sh
+
+								# Go to the template project
+$ cd CFU-Playground/proj/example_cfu_v
+
+$ make clean
+$ make prog TARGET=digilent_arty USE_VIVADO=1 EXTRA_LITEX_ARGS="--sys-clk-freq 75000000 --variant a7-100"
+$ make load BUILD_JOBS=$(nproc) TARGET=digilent_arty
+
+/home/asperkins42@tntech.edu/CFU-Playground/soc/bin/litex_term --speed 1843200  --kernel /home/asperkins42@tntech.edu/CFU-Playground/proj/example_cfu_v/build/software.bin /dev/ttyUSB1
+
+        __   _ __      _  __
+       / /  (_) /____ | |/_/
+      / /__/ / __/ -_)>  <
+     /____/_/\__/\__/_/|_|
+   Build your hardware, easily!
+
+ (c) Copyright 2012-2022 Enjoy-Digital
+ (c) Copyright 2007-2015 M-Labs
+
+ BIOS built on Aug 14 2025 15:41:26
+ BIOS CRC passed (6037e742)
+
+ LiteX git sha1: b9a1fec30
+
+--=============== SoC ==================--
+CPU:		VexRiscv_FullCfu @ 75MHz
+BUS:		WISHBONE 32-bit @ 4GiB
+CSR:		32-bit data
+ROM:		128KiB
+SRAM:		8KiB
+L2:		8KiB
+SDRAM:		262144KiB 16-bit @ 600MT/s (CL-7 CWL-5)
+
+--========== Initialization ============--
+Initializing SDRAM @0x40000000...
+Switching SDRAM to software control.
+Read leveling:
+  m0, b00: |00000000000000000000000000000000| delays: -
+  m0, b01: |11111111100000000000000000000000| delays: 04+-04
+  m0, b02: |00000000000111111111111111111100| delays: 20+-09
+  m0, b03: |00000000000000000000000000000000| delays: -
+  m0, b04: |00000000000000000000000000000000| delays: -
+  m0, b05: |00000000000000000000000000000000| delays: -
+  m0, b06: |00000000000000000000000000000000| delays: -
+  m0, b07: |00000000000000000000000000000000| delays: -
+  best: m0, b02 delays: 20+-09
+  m1, b00: |00000000000000000000000000000000| delays: -
+  m1, b01: |11111111100000000000000000000000| delays: 04+-04
+  m1, b02: |00000000000111111111111111111000| delays: 20+-09
+  m1, b03: |00000000000000000000000000000000| delays: -
+  m1, b04: |00000000000000000000000000000000| delays: -
+  m1, b05: |00000000000000000000000000000000| delays: -
+  m1, b06: |00000000000000000000000000000000| delays: -
+  m1, b07: |00000000000000000000000000000000| delays: -
+  best: m1, b02 delays: 20+-09
+Switching SDRAM to hardware control.
+Memtest at 0x40000000 (2.0MiB)...
+  Write: 0x40000000-0x40200000 2.0MiB     
+   Read: 0x40000000-0x40200000 2.0MiB     
+Memtest OK
+Memspeed at 0x40000000 (Sequential, 2.0MiB)...
+  Write speed: 27.3MiB/s
+   Read speed: 36.8MiB/s
+
+--============== Boot ==================--
+Booting from serial...
+Press Q or ESC to abort boot completely.
+sL5DdSMmkekro
+[LITEX-TERM] Received firmware download request from the device.
+[LITEX-TERM] Uploading /home/asperkins42@tntech.edu/CFU-Playground/proj/example_cfu_v/build/software.bin to 0x40000000 (999008 bytes)...
+[LITEX-TERM] Upload calibration... (inter-frame: 10.00us, length: 64)
+[LITEX-TERM] Upload complete (159.1KB/s).
+[LITEX-TERM] Booting the device.
+[LITEX-TERM] Done.
+Executing booted program at 0x40000000
+
+--============= Liftoff! ===============--
+Hello, World!
+
+CFU Playground
+==============
+ 1: TfLM Models menu
+ 2: Functional CFU Tests
+ 3: Project menu
+ 4: Performance Counter Tests
+ 5: TFLite Unit Tests
+ 6: Benchmarks
+ 7: Util Tests
+ 8: Embench IoT
+main> 1
+
+Running TfLM Models menu
+
+TfLM Models
+===========
+ 1: Person Detection int8 model
+ x: eXit to previous menu
+models> 1
+
+Running Person Detection int8 model
+Error_reporter OK!
+Input: 9216 bytes, 4 dims: 1 96 96 1
+
+
+Tests for pdti8 model
+=====================
+ 1: Run with zeros input
+ 2: Run with no-person input
+ 3: Run with person input
+ g: Run golden tests (check for expected outputs)
+ x: eXit to previous menu
+pdti8> g
+
+Running Run golden tests (check for expected outputs)
+Zeroed 9216 bytes at 0x400faf40
+Running pdti8
+...............................
+"Event","Tag","Ticks"
+0,DEPTHWISE_CONV_2D,22073
+1,DEPTHWISE_CONV_2D,22390
+2,CONV_2D,43794
+3,DEPTHWISE_CONV_2D,11340
+4,CONV_2D,38654
+5,DEPTHWISE_CONV_2D,31032
+6,CONV_2D,73031
+7,DEPTHWISE_CONV_2D,5733
+8,CONV_2D,36192
+9,DEPTHWISE_CONV_2D,11286
+10,CONV_2D,71648
+11,DEPTHWISE_CONV_2D,3163
+12,CONV_2D,35677
+13,DEPTHWISE_CONV_2D,5331
+14,CONV_2D,71080
+15,DEPTHWISE_CONV_2D,5066
+16,CONV_2D,70861
+17,DEPTHWISE_CONV_2D,4848
+18,CONV_2D,70795
+19,DEPTHWISE_CONV_2D,5226
+20,CONV_2D,71417
+21,DEPTHWISE_CONV_2D,5456
+22,CONV_2D,71770
+23,DEPTHWISE_CONV_2D,1347
+24,CONV_2D,37449
+25,DEPTHWISE_CONV_2D,2210
+26,CONV_2D,68861
+27,AVERAGE_POOL_2D,119
+28,CONV_2D,65
+29,RESHAPE,2
+30,SOFTMAX,12
+Perf counters not enabled.
+   920M (    919541914 )  cycles total
+Copied 9216 bytes at 0x400faf40
+Running pdti8
+...............................
+"Event","Tag","Ticks"
+0,DEPTHWISE_CONV_2D,22043
+1,DEPTHWISE_CONV_2D,22397
+2,CONV_2D,43840
+3,DEPTHWISE_CONV_2D,11346
+4,CONV_2D,38644
+5,DEPTHWISE_CONV_2D,31031
+6,CONV_2D,73012
+7,DEPTHWISE_CONV_2D,5731
+8,CONV_2D,36175
+9,DEPTHWISE_CONV_2D,11286
+10,CONV_2D,71636
+11,DEPTHWISE_CONV_2D,3162
+12,CONV_2D,35668
+13,DEPTHWISE_CONV_2D,5332
+14,CONV_2D,71078
+15,DEPTHWISE_CONV_2D,5065
+16,CONV_2D,70855
+17,DEPTHWISE_CONV_2D,4849
+18,CONV_2D,70792
+19,DEPTHWISE_CONV_2D,5228
+20,CONV_2D,71413
+21,DEPTHWISE_CONV_2D,5457
+22,CONV_2D,71767
+23,DEPTHWISE_CONV_2D,1347
+24,CONV_2D,37447
+25,DEPTHWISE_CONV_2D,2212
+26,CONV_2D,68863
+27,AVERAGE_POOL_2D,119
+28,CONV_2D,65
+29,RESHAPE,2
+30,SOFTMAX,13
+Perf counters not enabled.
+   919M (    919481791 )  cycles total
+Copied 9216 bytes at 0x400faf40
+Running pdti8
+...............................
+"Event","Tag","Ticks"
+0,DEPTHWISE_CONV_2D,22035
+1,DEPTHWISE_CONV_2D,22398
+2,CONV_2D,43845
+3,DEPTHWISE_CONV_2D,11346
+4,CONV_2D,38647
+5,DEPTHWISE_CONV_2D,31029
+6,CONV_2D,73013
+7,DEPTHWISE_CONV_2D,5731
+8,CONV_2D,36175
+9,DEPTHWISE_CONV_2D,11286
+10,CONV_2D,71635
+11,DEPTHWISE_CONV_2D,3163
+12,CONV_2D,35669
+13,DEPTHWISE_CONV_2D,5333
+14,CONV_2D,71080
+15,DEPTHWISE_CONV_2D,5065
+16,CONV_2D,70858
+17,DEPTHWISE_CONV_2D,4849
+18,CONV_2D,70790
+19,DEPTHWISE_CONV_2D,5228
+20,CONV_2D,71416
+21,DEPTHWISE_CONV_2D,5457
+22,CONV_2D,71768
+23,DEPTHWISE_CONV_2D,1348
+24,CONV_2D,37441
+25,DEPTHWISE_CONV_2D,2214
+26,CONV_2D,68861
+27,AVERAGE_POOL_2D,119
+28,CONV_2D,65
+29,RESHAPE,2
+30,SOFTMAX,12
+Perf counters not enabled.
+   919M (    919488327 )  cycles total
+OK   Golden tests passed
+---
+
+Tests for pdti8 model
+=====================
+ 1: Run with zeros input
+ 2: Run with no-person input
+ 3: Run with person input
+ g: Run golden tests (check for expected outputs)
+ x: eXit to previous menu
+pdti8> 
+```
+
 
 ## CFU Playground setup for Alveo U280
 
