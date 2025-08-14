@@ -17,8 +17,9 @@ $ tar xvfz ~/Downloads/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubu
 $ echo 'export PATH="$PATH:$HOME/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14/bin"' >> ~/.bashrc
 $ source ~/.bashrc
 
-which riscv64-unknown-elf-gcc   # should print a path
-ls /dev/ttyUSB*                 # Arty’s USB-UART usually shows here when plugged
+$ which riscv64-unknown-elf-gcc
+								# should print a path
+$ ls /dev/ttyUSB*               # Arty’s USB-UART usually shows here when plugged
 
 								# Always ensure Vivado is on PATH first in this shell
 $ source /opt/Xilinx/Vivado/202x.x/settings64.sh
