@@ -25,8 +25,11 @@ The bottom breadboard simply has a voltage regulator that takes in 9V and output
 
 ## Variations Compared to PCB
 
-The PCB version of this Trojan works in the same way, there are simply a couple of variations to the layout. First off, the layout is similar to the breadboard, but had to be adapted to fit the 9V battery and its housing. There is also an additional switch added between the 9V battery and the voltage regulator, giving the user an off switch if desired. 
+The PCB version of this Trojan works in the same way; there are simply a couple of variations to the layout. First off, the layout is similar to the breadboard, but had to be adapted to fit the 9V battery and its housing. There is also an additional switch added between the 9V battery and the voltage regulator, giving the user an off switch if desired. 
 
 There are two versions of the PCB. One is a clean version, with no Trojan on the board at all. The other is an "attacked" version that has the Trojan on board, which is still activated by the switch. 
+
+## Things to note!
+The Trojan activation does not work exactly as calculated. The time it takes from Trojan trigger to activation was calculated to be ~4 seconds, but in the actual implementation, it is more like 10 seconds. The random number generation also biases certain numbers.
 
 
