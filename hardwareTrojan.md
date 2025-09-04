@@ -35,4 +35,6 @@ The Trojan activation does not work exactly as calculated. The time it takes fro
 <img width="1286" height="893" alt="image" src="https://github.com/user-attachments/assets/e501f18c-8d8c-4568-84d2-62020a3dfbb5" />
 
 
+<img width="1207" height="842" alt="image" src="https://github.com/user-attachments/assets/09eebc1f-36c4-4ac4-921f-05c3371900c4" />
+
 
