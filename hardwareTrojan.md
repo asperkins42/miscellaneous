@@ -2,7 +2,7 @@
 
 ## What does it do?
 
-This circuit, under normal operating conditions, will roll a random number between 0 and 7 (inclusive) when the button is pressed. This is meant to act as a potential "dice roller" for a game like Yahtzee, Monopoly, etc. When the Trojan is activated via the switch, the dice lock up, and no numbers are able to be rolled until the Trojan is deactivated. This showcases how hardware could potentially be inserted to rig a game in one's favor. 
+This circuit, under normal operating conditions, will roll a random number between 0 and 7 (inclusive) when the button is pressed twice. This is meant to act as a potential "dice roller" for a game like Yahtzee, Monopoly, etc. When the Trojan is activated via the switch, the dice lock up, and no numbers are able to be rolled until the Trojan is deactivated. This showcases how malicious hardware could potentially be inserted to rig a game in one's favor. 
 
 ## Circuit Behavior
 ![alt text](images/asperkins42_hardwareTrojanImg1.jpg "HWT 1")
