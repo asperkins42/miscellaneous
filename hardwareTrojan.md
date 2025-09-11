@@ -33,8 +33,10 @@ There are two versions of the PCB. One is a clean version, with no Trojan on the
 The Trojan activation does not work exactly as calculated. The time it takes from Trojan trigger to activation was calculated to be ~4 seconds, but in the actual implementation, it is more like 10 seconds. The random number generation also biases certain numbers.
 
 <img width="1286" height="893" alt="image" src="https://github.com/user-attachments/assets/e501f18c-8d8c-4568-84d2-62020a3dfbb5" />
+Schematic for Circuit with Hardware Trojan
 
 
 <img width="1207" height="842" alt="image" src="https://github.com/user-attachments/assets/09eebc1f-36c4-4ac4-921f-05c3371900c4" />
+Schematic for Hardware Trojan
 
 
