@@ -4,7 +4,12 @@
 This circuit, under normal operating conditions, was designed to be a pseudorandom number generator that could roll anywhere between 0 and 7 (inclusive). This is meant to act as a potential "dice roller" for a game like Yahtzee, Monopoly, etc. When the Trojan is activated via the switch, the dice lock up, and no numbers are able to be rolled until the Trojan is deactivated. This showcases how malicious hardware could potentially be inserted to rig a game in one's favor. 
 
 ## Circuit Behavior (Engineering Terms)
-![alt text](images/asperkins42_hardwareTrojanImg1.jpg "HWT 1")
+
+<p align="center">
+  <img src="images/asperkins42_hardwareTrojanImg1.jpg" alt="PCB with Trojan"/>
+  <br>
+  <em>Figure X: Breadboard Hardware Trojan Design part 1</em>
+</p>
 
 In the above image, you can see the majority of the Hardware Trojan circuit. 
 Beginning at the top left, we have the XOR chip. This chip acts as an enable for the ring-oscillator part of this circuit. When the Trojan is not active, the XOR gate outputs a 1, allowing the ROs to begin oscillation. When the Trojan goes high, the XOR output changes to 0, which stops the oscillation of the ring oscillators. Two of the four available XOR gates are used in this circuit. 
