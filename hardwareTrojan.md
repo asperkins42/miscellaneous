@@ -40,21 +40,21 @@ There are two versions of the PCB. One is a clean version, with no Trojan on the
 </p>
 
 <p align="center">
-  <img src="images/pcb_with_trojan.jpg" alt="PCB with Trojan"/>
+  <img src="https://github.com/user-attachments/assets/e501f18c-8d8c-4568-84d2-62020a3dfbb5" alt="PCB with Trojan"/>
   <br>
-  <em>Figure X: PCB for Circuit with Hardware Trojan</em>
+  <em>Figure X: Schematic for Circuit with Hardware Trojan</em>
 </p>
 
 <p align="center">
-  <img src="images/pcb_no_trojan.jpg" alt="PCB with Trojan" width="500"/>
+  <img src="images/pcb_no_trojan.jpg" alt="PCB with Trojan"/>
   <br>
-  <em>Figure X: PCB for Circuit with Hardware Trojan</em>
+  <em>Figure X: PCB for Circuit without Hardware Trojan</em>
 </p>
 
 <p align="center">
-  <img src="images/pcb_with_trojan.jpg" alt="PCB with Trojan" width="500"/>
+  <img src="https://github.com/user-attachments/assets/09eebc1f-36c4-4ac4-921f-05c3371900c4" alt="PCB with Trojan"/>
   <br>
-  <em>Figure 1: PCB for Circuit with Hardware Trojan</em>
+  <em>Figure X: Schematic for Circuit with Hardware Trojan</em>
 </p>
 
 
