@@ -35,7 +35,7 @@ There are two versions of the PCB. One is a clean version, with no Trojan on the
 <img width="1207" height="842" alt="image" src="https://github.com/user-attachments/assets/09eebc1f-36c4-4ac4-921f-05c3371900c4" />
 <center>Schematic for Circuit without Hardware Trojan</center>
 
-<img width="1207" height="842" alt="image" src="images/pcb_no_trojan" />
+<img width="1207" height="842" alt="image" src="images/pcb_no_trojan.jpg" />
 <center>Schematic for Circuit without Hardware Trojan</center>
 
 <img width="1207" height="842" alt="image" src="https://github.com/user-attachments/assets/09eebc1f-36c4-4ac4-921f-05c3371900c4" />
