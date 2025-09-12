@@ -21,7 +21,11 @@ Essentially, this circuit has two paths that race each other, and based on which
 The Trojan in this circuit stops the racing signals in the two paths. The first black chip in the top left (to the right of the switch) is called a XOR gate, and when the Trojan is not active, it enables the racing signals. Once the Trojan is activated via the second blue switch, a ~10-second timer starts, and once it expires, the XOR gate disables the racing signals. This causes the buffer to hold the three bits it has in it, and the number on the seven-segment display no longer changes. 
 
 ## Trojan Activation 
-![alt text](images/asperkins42_hardwareTrojanImg2.jpg "HWT 2")
+<p align="center">
+  <img src="images/asperkins42_hardwareTrojanImg2.jpg" alt="PCB with Trojan"/>
+  <br>
+  <em>Figure X: Breadboard Hardware Trojan Design part 2</em>
+</p>
 
 In this image, you can see the bottom two breadboards, where not much is going on. Breadboard 3 houses the on/off switch for the Trojan, along with the AND gate, the capacitors, and the resistors that make up the Trojan. When the switch is turned on, 5V is supplied to the AND gate and the RC circuit. The RC circuit has a time constant (around 10 seconds) so that once the capacitor fully charges, both inputs to the AND gate go high, resulting in a 1 being output. The 1 is then propagated to the XOR gates from the beginning, which locks the circuit into whichever number was currently rolled. 
 
@@ -56,17 +60,6 @@ There are two versions of the PCB. One is a clean version, with no Trojan on the
   <br>
   <em>Figure X: Schematic for Circuit with Hardware Trojan</em>
 </p>
-
-
-<img width="1286" height="893" alt="image" src="https://github.com/user-attachments/assets/e501f18c-8d8c-4568-84d2-62020a3dfbb5" />
-<center>Schematic for Circuit with Hardware Trojan</center>
-
-<img alt="image" src="images/pcb_no_trojan.jpg" />
-<center>PCB for Circuit without Hardware Trojan</center>
-
-<img width="1207" height="842" alt="image" src="https://github.com/user-attachments/assets/09eebc1f-36c4-4ac4-921f-05c3371900c4" />
-<center>Schematic for Circuit without Hardware Trojan</center>
-
 
 ## Standard Operating Procedure
 
