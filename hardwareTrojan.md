@@ -33,8 +33,12 @@ The PCB version of this Trojan works in the same way; there are simply a couple 
 
 There are two versions of the PCB. One is a clean version, with no Trojan on the board at all. The other is an "attacked" version that has the Trojan on board, which is still activated by the switch. These two versions can be seen below as circuit diagrams. 
 
-<img alt="image" src="images/pcb_with_trojan.jpg" />
-<center>PCB for Circuit with Hardware Trojan</center>
+<p align="center">
+  <img src="images/pcb_with_trojan.jpg" alt="PCB with Trojan" width="500"/>
+  <br>
+  <em>Figure 1: PCB for Circuit with Hardware Trojan</em>
+</p>
+
 
 <img width="1286" height="893" alt="image" src="https://github.com/user-attachments/assets/e501f18c-8d8c-4568-84d2-62020a3dfbb5" />
 <center>Schematic for Circuit with Hardware Trojan</center>
