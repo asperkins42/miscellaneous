@@ -11,7 +11,7 @@ This circuit, under normal operating conditions, was designed to be a pseudorand
   <em>Figure 1: Breadboard Hardware Trojan Design part 1</em>
 </p>
 
-In the above image, you can see the majority of the Hardware Trojan circuit. 
+In Figure 1, you can see the majority of the Hardware Trojan circuit. 
 Beginning at the top left, we have the XOR chip. This chip acts as an enable for the ring-oscillator part of this circuit. When the Trojan is not active, the XOR gate outputs a 1, allowing the ROs to begin oscillation. When the Trojan goes high, the XOR output changes to 0, which stops the oscillation of the ring oscillators. Two of the four available XOR gates are used in this circuit. 
 
 The chip to the right of the XOR gate is a NAND gate. This acts as the first stage of the ring oscillator and allows the oscillators to be turned on and off. Two NAND gates are used, one for each of the ROs. 
@@ -32,7 +32,7 @@ The Trojan in this circuit stops the racing signals in the two paths. The first 
   <em>Figure 2: Breadboard Hardware Trojan Design part 2</em>
 </p>
 
-In this image, you can see the bottom two breadboards, where not much is going on. Breadboard 3 houses the on/off switch for the Trojan, along with the AND gate, the capacitors, and the resistors that make up the Trojan. When the switch is turned on, 5V is supplied to the AND gate and the RC circuit. The RC circuit has a time constant (around 10 seconds) so that once the capacitor fully charges, both inputs to the AND gate go high, resulting in a 1 being output. The 1 is then propagated to the XOR gates from the beginning, which locks the circuit into whichever number was currently rolled. 
+In Figure 2, you can see the bottom two breadboards, where not much is going on. Breadboard 3 houses the on/off switch for the Trojan, along with the AND gate, the capacitors, and the resistors that make up the Trojan. When the switch is turned on, 5V is supplied to the AND gate and the RC circuit. The RC circuit has a time constant (around 10 seconds) so that once the capacitor fully charges, both inputs to the AND gate go high, resulting in a 1 being output. The 1 is then propagated to the XOR gates from the beginning, which locks the circuit into whichever number was currently rolled. 
 
 The bottom breadboard simply has a voltage regulator that takes in 9V and outputs 5V. 
 
@@ -40,7 +40,7 @@ The bottom breadboard simply has a voltage regulator that takes in 9V and output
 
 The PCB version of this Trojan works in the same way; there are simply a couple of variations to the layout. First off, the layout is similar to the breadboard, but had to be adapted to fit the 9V battery and its housing. An additional switch has been added between the 9V battery and the voltage regulator, allowing the user to switch off the device if desired. 
 
-There are two versions of the PCB. One is a clean version, with no Trojan on the board at all. The other is an "attacked" version that has the Trojan on board, which is still activated by the switch. These two versions can be seen below as circuit diagrams. 
+There are two versions of the PCB. One is a clean version, with no Trojan on the board at all. The other is an "attacked" version that has the Trojan on board, which is still activated by the switch. These two versions can be seen below as circuit diagrams. Below, in Figures 3-6, you can see the circuit diagram and the actual PCB implementation of both the Trojan-free and Trojan boards.
 
 <p align="center">
   <img src="images/pcb_with_trojan.jpg" alt="PCB with Trojan"/>
