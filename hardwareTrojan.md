@@ -8,7 +8,7 @@ This circuit, under normal operating conditions, was designed to be a pseudorand
 <p align="center">
   <img src="images/asperkins42_hardwareTrojanImg1.jpg" alt="PCB with Trojan"/>
   <br>
-  <em>Figure X: Breadboard Hardware Trojan Design part 1</em>
+  <em>Figure 1: Breadboard Hardware Trojan Design part 1</em>
 </p>
 
 In the above image, you can see the majority of the Hardware Trojan circuit. 
@@ -29,7 +29,7 @@ The Trojan in this circuit stops the racing signals in the two paths. The first 
 <p align="center">
   <img src="images/asperkins42_hardwareTrojanImg2.jpg" alt="PCB with Trojan"/>
   <br>
-  <em>Figure X: Breadboard Hardware Trojan Design part 2</em>
+  <em>Figure 2: Breadboard Hardware Trojan Design part 2</em>
 </p>
 
 In this image, you can see the bottom two breadboards, where not much is going on. Breadboard 3 houses the on/off switch for the Trojan, along with the AND gate, the capacitors, and the resistors that make up the Trojan. When the switch is turned on, 5V is supplied to the AND gate and the RC circuit. The RC circuit has a time constant (around 10 seconds) so that once the capacitor fully charges, both inputs to the AND gate go high, resulting in a 1 being output. The 1 is then propagated to the XOR gates from the beginning, which locks the circuit into whichever number was currently rolled. 
@@ -45,25 +45,25 @@ There are two versions of the PCB. One is a clean version, with no Trojan on the
 <p align="center">
   <img src="images/pcb_with_trojan.jpg" alt="PCB with Trojan"/>
   <br>
-  <em>Figure X: PCB for Circuit with Hardware Trojan</em>
+  <em>Figure 3: PCB for Circuit with Hardware Trojan</em>
 </p>
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/e501f18c-8d8c-4568-84d2-62020a3dfbb5" alt="PCB with Trojan"/>
   <br>
-  <em>Figure X: Schematic for Circuit with Hardware Trojan</em>
+  <em>Figure 4: Schematic for Circuit with Hardware Trojan</em>
 </p>
 
 <p align="center">
   <img src="images/pcb_no_trojan.jpg" alt="PCB with Trojan"/>
   <br>
-  <em>Figure X: PCB for Circuit without Hardware Trojan</em>
+  <em>Figure 5: PCB for Circuit without Hardware Trojan</em>
 </p>
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/09eebc1f-36c4-4ac4-921f-05c3371900c4" alt="PCB with Trojan"/>
   <br>
-  <em>Figure X: Schematic for Circuit with Hardware Trojan</em>
+  <em>Figure 6: Schematic for Circuit with Hardware Trojan</em>
 </p>
 
 ## Standard Operating Procedure
