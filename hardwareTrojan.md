@@ -3,7 +3,7 @@
 ## What does it do?
 This circuit, under normal operating conditions, was designed to be a pseudorandom number generator that could roll anywhere between 0 and 7 (inclusive). This is meant to act as a potential "dice roller" for a game like Yahtzee, Monopoly, etc. When the Trojan is activated via the switch, the dice lock up, and no numbers are able to be rolled until the Trojan is deactivated. This showcases how malicious hardware could potentially be inserted to rig a game in one's favor. 
 
-## Circuit Behavior (Engineering Terms)
+## Circuit Behavior
 
 <p align="center">
   <img src="images/asperkins42_hardwareTrojanImg1.jpg" alt="PCB with Trojan"/>
@@ -20,7 +20,7 @@ The remaining six chips on the top row are the rest of the ring oscillators. The
 
 On the second row, the first chip is a counter. Each RO feeds into the input of the counter, and the most significant outputs of the two counters are used as inputs for the first three D-Flip Flops (The top row of the next three chips). One counter controls the input to the first of the three streaming DFFs, while the other counter controls all three of the clocks. This makes it so that on every clock edge, the input advances one stage. The second set of DFFs (the bottom row of the same three chips) handles the storage of the current value. The output of the top three DFFs feeds into the input of the bottom three DFFs, and these are clocked by a button (that I have just noticed is absent from the picture, but would connect the red (5V) wire to the white wire at the end of the breadboard we are currently on). When this button is pressed (twice), the value that is currently being output by the top three DFFs is locked into the bottom three DFFs and is output on their Q pin. These three bits are then fed into a hexadecimal decoder (the final black IC on this breadboard) whose most significant value is held to 0V. The outputs of this decoder are connected to the seven-segment display as shown. The green LED was used in debugging and did make its way into the final PCB design. All it does is illuminate when the button is pressed. 
 
-## Circuit Behavior (Non-Engineering Terms)
+## Circuit Behavior (Simpler Terms)
 Essentially, this circuit has two paths that race each other, and based on which signal wins the race, either a 1 or a 0 is output. These 1's and 0's are stored in a 3-bit first-in first-out buffer, meaning that 3 bits are stored at a time, and when a new bit arrives, the oldest bit leaves. These 3 bits are used to represent the integers 0 through 7, and every time the button is pressed (twice), a snapshot is taken of the current three bits and set aside to be decoded. The decoder looks at the three bits, determines what number they represent, and sends it to the seven-segment display so that a human can read it. 
 
 The Trojan in this circuit stops the racing signals in the two paths. The first black chip in the top left (to the right of the switch) is called a XOR gate, and when the Trojan is not active, it enables the racing signals. Once the Trojan is activated via the second blue switch, a ~10-second timer starts, and once it expires, the XOR gate disables the racing signals. This causes the buffer to hold the three bits it has in it, and the number on the seven-segment display no longer changes. 
