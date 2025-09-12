@@ -56,11 +56,15 @@ There are two versions of the PCB. One is a clean version, with no Trojan on the
   <em>Figure 4: Schematic for Circuit with Hardware Trojan</em>
 </p>
 
+<br><br><br>
+
 <p align="center">
   <img src="images/pcb_no_trojan.jpg" alt="PCB with Trojan"/>
   <br>
   <em>Figure 5: PCB for Circuit without Hardware Trojan</em>
 </p>
+
+<br><br>
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/09eebc1f-36c4-4ac4-921f-05c3371900c4" alt="PCB with Trojan"/>
