@@ -48,6 +48,8 @@ There are two versions of the PCB. One is a clean version, with no Trojan on the
   <em>Figure 3: PCB for Circuit with Hardware Trojan</em>
 </p>
 
+<br><br>
+
 <p align="center">
   <img src="https://github.com/user-attachments/assets/e501f18c-8d8c-4568-84d2-62020a3dfbb5" alt="PCB with Trojan"/>
   <br>
@@ -69,15 +71,15 @@ There are two versions of the PCB. One is a clean version, with no Trojan on the
 ## Standard Operating Procedure
 
 1. Place a 9V battery into the battery holder.
-2. With the board oriented so that the battery is in the bottom left corner, flip the switch to the on position. Note: the switch we have chosen to use is marked strangely, with an "on" position and a "1" position. Know that the board is on and active when the seven-segment display is lit. 
+2. With the board oriented so that the battery is in the bottom left corner, flip the switch to the active (ON) position. Note: the switch we have chosen to use is marked strangely, with an "on" position and a "1" position. Know that the board is on and active when the seven-segment display is lit. 
 3. Press the button two times to "roll" the dice.
-4. To enable the Trojan, flip the other switch to the active position. (Not certain what this is labeled as, will check tomorrow.) After 10 seconds, the number displayed on the seven-segment display will no longer change. To disable the Trojan, simply flip the switch back to the inactive position.
-5. To turn the dice roller off, flip the other switch to the inactive position.
+4. To enable the Trojan, flip the other switch to the active (ON) position. After 10 seconds, the number displayed on the seven-segment display will no longer change. To disable the Trojan, simply flip the switch back to the inactive position.
+5. To turn the dice roller off, flip the other switch to the inactive (1) position.
    
 
 ## Things to note!
-The Trojan activation does not work exactly as calculated. The time it takes from Trojan trigger to activation was calculated to be ~4 seconds, but in the actual implementation, it is more like 10 seconds. The random number generation also biases certain numbers.
+The Trojan activation does not work exactly as planned. The time it takes from Trojan trigger to activation was calculated to be ~4 seconds, but in the actual implementation, it is more like 10 seconds. 
 
 Originally, the roller was supposed to activate upon each button press. For some reason, potentially due to the button choice, it activates every two button presses. The documentation has been updated to reflect this. 
 
-When rolling the number, you may notice that there are certain numbers that appear more frequently than others. This is a pseudorandom number generator, meaning it is not truly random, it just appears to be.
+When rolling the number, you may notice that there are certain numbers that appear more frequently than others. This is a pseudorandom number generator, meaning it is not truly random; it just appears to be. We have been able to get all 8 possible numbers in testing, but some occur much less often than others. 
