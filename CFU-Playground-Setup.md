@@ -2,7 +2,7 @@
 
 ```
 
-$ source /opt/Xilinx/Vivado/202x.x/settings64.sh
+$ source /tools/Xilinx/Vivado/202x.x/settings64.sh
 								# or wherever your Vivado is installed to
 $ sudo apt-get update
 $ sudo apt-get install -y git python3 python3-pip python3-venv build-essential
@@ -22,7 +22,7 @@ $ which riscv64-unknown-elf-gcc
 $ ls /dev/ttyUSB*               # Arty’s USB-UART usually shows here when plugged
 
 								# Always ensure Vivado is on PATH first in this shell
-$ source /opt/Xilinx/Vivado/202x.x/settings64.sh
+$ source /tools/Xilinx/Vivado/202x.x/settings64.sh
 
 								# Go to the template project
 $ cd CFU-Playground/proj/example_cfu_v
