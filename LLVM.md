@@ -15,34 +15,53 @@ At this point, we have our Intermediate Representation, IR. (AST is also one of 
 # Setting Up LLVM
 
 ```
-# get and install clang and llvm
+1. Install LLVM 16 + Clang 16 + tools
 wget https://apt.llvm.org/llvm.sh
 chmod +x llvm.sh
 sudo ./llvm.sh 16
 sudo apt update
-sudo apt install clang-16 llvm-16 llvm-16-dev lld-16
+sudo apt install -y clang-16 llvm-16 llvm-16-dev lld-16 cmake build-essential
 
-# sanity checks to make sure everything is installed properly
-clang-16 --version              
+# sanity check
+clang-16 --version
 opt-16 --version
 llvm-config-16 --version
 
-# make a simple project
+2. Create a simple project layout
 mkdir -p ~/mm_detect/{build,sample}
 cd ~/mm_detect
 
-# in mm_detect place CMakeLists.txt, kernel_detect.cpp
-#    mm_detect/sample/mm.c    <--- other kernel files go here, this is where the program will check kernels.
+# File structure should be like this -- see below for CMakeLists.txt, mm.c, kernel_detect.cpp
+# mm_detect/
+#  ├── CMakeLists.txt          ← build config
+#  ├── kernel_detect.cpp       ← your LLVM pass
+#  ├── sample/
+#  │    ├── mm.c               ← matrix multiply test
+#  │    ├── conv2d_valid.c     ← optional 2-D convolution test
+#  │    └── ...
+#  └── build/                  ← build output
 
-# build the plugin
+3. Build LLVM pass plugin
 cd ~/mm_detect/build
 cmake -DLLVM_DIR=/usr/lib/llvm-16/lib/cmake/llvm ..
-make -j
-# -> produces ./MatMulDetect.so
+make -j$(nproc)
+# Result: MatMulDetect.so
 
-# run detector with opt-16 on IR
+4. Generate LLVM IR (.bc) and run the pass.
+# compile to LLVM bitcode
 clang-16 -O1 -c -emit-llvm ../sample/mm.c -o mm.bc
-opt-16 -load-pass-plugin ./MatMulDetect.so -passes="matmul-detect" -disable-output mm.bc 
+
+# run the detector
+opt-16 -load-pass-plugin ./MatMulDetect.so -passes="kernel-detect" -disable-output mm.bc
+
+# should see something like
+[kernel-detect] GEMM in 'mm'
+  headers: L1=%17 L2=%23 L3=%34
+
+# optional: add 'detect-kernels' as a makefile target for integration (still need to work on this)
+detect-kernels:
+	clang-16 -O1 -c -emit-llvm proj_menu.cc -o proj_menu.bc
+	opt-16 -load-pass-plugin ./MatMulDetect.so -passes="kernel-detect" -disable-output proj_menu.bc
 ```
 
 # LLVM in our project
@@ -73,30 +92,37 @@ This first section just pulls in a bunch of helpful includes from the installed 
 CMakeLists.txt
 ```
 cmake_minimum_required(VERSION 3.13)
-
-# Use whichever compilers worked for you (g++ or clang++)
-# If clang++ gave you trouble, leave CMAKE_CXX_COMPILER as g++.
-set(CMAKE_C_COMPILER clang-16)
-set(CMAKE_CXX_COMPILER g++)  # or clang++-16 if you prefer and it works
-
-project(MatMulDetect LANGUAGES C CXX)
+project(KernelDetect LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(LLVM 16 REQUIRED CONFIG PATHS /usr/lib/llvm-16/lib/cmake/llvm)
-message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION} in ${LLVM_DIR}")
 list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
 include(HandleLLVMOptions)
+include(AddLLVM)
 
-# Important: tell LLVM CMake to link the shared libLLVM if available
-set(LLVM_LINK_LLVM_DYLIB ON)
-
-add_library(MatMulDetect SHARED ../matmul_detect.cpp)
+add_library(MatMulDetect SHARED ../kernel_detect.cpp)
 set_target_properties(MatMulDetect PROPERTIES PREFIX "")
 
 target_include_directories(MatMulDetect PRIVATE ${LLVM_INCLUDE_DIRS})
 target_compile_definitions(MatMulDetect PRIVATE ${LLVM_DEFINITIONS})
 
-# Link ONLY the monolithic shared LLVM; do NOT list component libs
-target_link_libraries(MatMulDetect PRIVATE LLVM)
+llvm_map_components_to_libnames(LLVM_LIBS
+  Core Support Analysis TransformUtils ScalarOpts Passes IRReader
+)
+target_link_libraries(MatMulDetect PRIVATE ${LLVM_LIBS})
+```
+
+mm.c 
+```
+#include <stddef.h>
+void mm(float *A, float *B, float *C, int M, int N, int K) {
+  for(int i=0;i<M;i++)
+    for(int j=0;j<N;j++){
+      float acc=0.0f;
+      for(int k=0;k<K;k++)
+        acc += A[(size_t)i*K + k] * B[(size_t)k*N + j];
+      C[(size_t)i*N + j] = acc;
+    }
+}
 ```
