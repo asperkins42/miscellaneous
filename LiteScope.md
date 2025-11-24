@@ -27,8 +27,6 @@ This is very basic documentation of what was run in an attempt to make LiteScope
             self.add_csr("analyzer")
 ```
 
-
-
 ### What Codex tried doing
 1. make clean; make prog …; make load … as usual.
 
@@ -69,7 +67,9 @@ In that socket-based console, press w to reproduce the hang. The analyzer will f
 
 [CommUART] port: /dev/ttyUSB2 / baudrate: 1843200 / tcp port: 1234
 Connected with 127.0.0.1:55374
-
+```
+And in a second terminal window, I run this command. 
+```
 (amaranth) asperkins42@milan3:~/cfu-playground-cfuaxi (main +*%)$ ./scripts/pyrun -m litescope.software.litescope_cli
 --csr-csv soc/csr.csv
 --csv soc/analyzer.csv
@@ -107,6 +107,10 @@ chunk = socket.recv(header_length - len(packet))
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 TimeoutError: timed out
 ```
+
+The first three lines `Exact: soc_basesoc_vexriscv_aw_valid; Exact: soc_basesoc_vexriscv_aw_valid; Condition: soc_basesoc_vexriscv_aw_valid == 0b1` print, then it hangs for a second, followed by the timeout error.
+
+I am uncertain how to keep this from happening. By the time I run the command, I have already stopped running the LiteX terminal that runs my kernel, so I don't think that is conflicting, but I am unsure how to continue from here. I have attached my project file below so you can see how my SoC is set up and what signals are being exposed to LiteScope.
 
 ### TARGET File
 ```
