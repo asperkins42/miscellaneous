@@ -58,6 +58,7 @@ It will print the trigger condition and then wait.
 (or even nc localhost 1234 if you just need raw characters). That session goes through litex_server, so it can coexist with LiteScope.
 In that socket-based console, press w to reproduce the hang. The analyzer will fire, upload the data, and analyzer.vcd will be ready for GTKWave.
 
+## What I've been doing
 ```
 (amaranth) ./soc/bin/litex_server \ <- 17m 13s951 | 12:56PM
 --uart
@@ -110,7 +111,9 @@ TimeoutError: timed out
 
 The first three lines `Exact: soc_basesoc_vexriscv_aw_valid; Exact: soc_basesoc_vexriscv_aw_valid; Condition: soc_basesoc_vexriscv_aw_valid == 0b1` print, then it hangs for a second, followed by the timeout error.
 
-I am uncertain how to keep this from happening. By the time I run the command, I have already stopped running the LiteX terminal that runs my kernel, so I don't think that is conflicting, but I am unsure how to continue from here. I have attached my project file below so you can see how my SoC is set up and what signals are being exposed to LiteScope.
+I am unable to continue to Step 5 because LiteScope times out instead of waiting.
+
+I am uncertain how to keep this from happening. By the time I run the command, I have already stopped running the LiteX terminal that runs my kernel, so I don't think that is conflicting, but I am unsure how to continue from here. I have attached my project file below so you can see how my SoC is set up and what signals are being exposed to LiteScope. If there are any additional files you would like to see, let me know. 
 
 ### TARGET File
 ```
