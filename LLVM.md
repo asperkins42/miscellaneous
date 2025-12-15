@@ -117,6 +117,9 @@ asperkins42@milan3:~$ source ~/likelyImportant/source-me.fish
   Amaranth:     found at /home/asperkins42/CFU-Playground/amaranth/lib/python3.12/site-packages/amaranth/__init__.py
   Yosys:        /usr/bin/yosys
 
+.
+.
+.
 
 (amaranth) asperkins42@milan3:~/m/build$ cd ..                                                                                                                          
 (amaranth) asperkins42@milan3:~/mm_detect$ rm -rf build                                                                                                                 
