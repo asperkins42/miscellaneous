@@ -140,6 +140,45 @@ asperkins42@milan3:~$ source ~/likelyImportant/source-me.fish
   headers: L1=%19 L2=%21 L3=%31
   matrices: A=%2 B=%1 C=%3
   sizes: M=100 N=100 K=100
+
+.
+.
+.
+
+# IN THE CFU PLAYGROUND DIRECTORY NOW, TO USE WITH proj_menu.cc
+
+(amaranth) asperkins42@milan3:~/cfu-playground-cfuaxi (main +*%)$ $LLVM/clang++ -O1 -c -emit-llvm \                                                                                   1 ↵ <- 0s105 |  8:01PM
+                                                                        -std=gnu++14 -Wno-register -Wno-error=register \
+                                                                        --target=riscv32-unknown-elf -march=rv32im -mabi=ilp32 -D__vexriscv__ \
+                                                                        --gcc-toolchain=$GCC_TOOLCHAIN --sysroot=$GCC_TOOLCHAIN/riscv64-unknown-elf \
+                                                                        -I$REPO/third_party/python/litex/litex/soc/software/include \
+                                                                        -I$REPO/third_party/python/litex/litex/soc/software/libbase \
+                                                                        -I$REPO/third_party/python/litex/litex/soc/cores/cpu/vexriscv \
+                                                                        -I$SOC_BUILD/include -I$SOC_BUILD/include/libc \
+                                                                        -I$REPO/proj/common \
+                                                                        -I$REPO/proj/11_30/src \
+                                                                        -I$REPO/proj/11_30/build/src \
+                                                                        -include $SOC_BUILD/libc/picolibc.h \
+                                                                        -nostdlib -fno-builtin -ffunction-sections -fdata-sections \
+                                                                        $REPO/proj/11_30/src/proj_menu.cc -o proj_menu.bc
+
+(amaranth) asperkins42@milan3:~/cfu-playground-cfuaxi (main +*%)$ /auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/bin/opt \                                                          <- 0s243 |  8:01PM
+                                                                        -load-pass-plugin ./MatMulDetect.so \
+                                                                        -passes='kernel-detect' \
+                                                                        -disable-output proj_menu.bc
+
+(amaranth) asperkins42@milan3:~/cfu-playground-cfuaxi (main +*%)$ /auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/bin/opt \                                                      1 ↵ <- 0s057 |  8:03PM
+                                                                        -load-pass-plugin ../mm_detect/build/MatMulDetect.so \
+                                                                        -passes='kernel-detect' \
+                                                                        -disable-output proj_menu.bc
+
+[kernel-detect] No GEMM/Conv2D in 'do_proj_menu'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_111prompt_uintEPKcjPj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_114check_sp1_tileEjjPKc'
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_119run_host_gemm_benchEi'
+  headers: L1=%121 L2=%124 L3=%134
+  matrices: A=_ZN12_GLOBAL__N_16g_B_rmE B=_ZN12_GLOBAL__N_16g_A_rmE C=_ZN12_GLOBAL__N_17g_C_refE
+  sizes: M=%0 N=%0 K=%0
 ```
 
 # Source Files
