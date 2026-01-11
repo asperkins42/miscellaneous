@@ -220,3 +220,56 @@ void mm(float *A, float *B, float *C, int M, int N, int K) {
     }
 }
 ```
+
+### CURRENT LLVM INFORMATION
+
+```
+asperkins42@milan3:~$ bass module load vitis/2020.2                                                                                            
+asperkins42@milan3:~$ bass module load llvm/16.0.6                                  
+asperkins42@milan3:~$ cd cfu-playground-cfuaxi/proj/1_10_26/                                                                                   
+asperkins42@milan3:~/c/p/1_10_26 (main +*%)$ source ~/likelyImportant/source-me.fish                                                           
+
+✅ Environment loaded:
+  Vivado:       /auto/software/swtree/ubuntu22.04/x86_64/Xilinx/Vivado/2020.2/bin/vivado
+  Vitis:        /auto/software/swtree/ubuntu22.04/x86_64/Xilinx/Vitis/2020.2/bin/vitis
+  XRT:          /opt/xilinx/xrt/bin/xbutil
+  RISC-V GCC:   /home/asperkins42/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc
+
+  Amaranth:     found at /home/asperkins42/CFU-Playground/amaranth/lib/python3.12/site-packages/amaranth/__init__.py
+  Yosys:        /usr/bin/yosys
+
+asperkins42@milan3:~$ bass module load cmake/4.1.1    
+
+(amaranth) asperkins42@milan3:~/c/p/1_10_26 (main +*%)$ set LLVM /auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/bin                      
+                                                        set REPO $HOME/cfu-playground-cfuaxi
+                                                        set SOC_BUILD $REPO/soc/build/xilinx_alveo_u280.1_10_26/software
+```
+
+At this point, I was getting an error using the old compilation command, so I ran `make load ... V=1` to get the exact command the Makefile uses to compile proj_menu.cc into proj_menu.o. I adjust this command slightly to produce proj_menu.bc instead, and can then run the LLVM pass on this new .bc file. 
+
+```
+(amaranth) asperkins42@milan3:~/c/p/1_10_26 (main +*%)$ riscv64-unknown-elf-g++ -DREPLACE_NAME_=proj_menu -c -emit-llvm src/proj_menu.cc \                                            1 ↵ <- 0s121 |  3:13AM
+                                                              -march=rv32im -mabi=ilp32 -D__vexriscv__ -D PLACEHOLDER -D INCLUDE_MODEL_PDTI8 \
+                                                              -D PLATFORM_common_soc -D PLATFORM=common_soc \
+                                                              -Isrc -Isrc/third_party/gemmlowp -Isrc/third_party/flatbuffers/include \
+                                                              -Isrc/third_party/ruy -Isrc/third_party/kissfft \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/soc/build/xilinx_alveo_u280.1_10_26/software/include \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/soc/build/xilinx_alveo_u280.1_10_26/software/libc \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/software/include \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/cores/cpu/vexriscv \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/cores/cpu/serv \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/proj/1_10_26/build/src \
+															  -ffunction-sections -fdata-sections -fno-common -fomit-frame-pointer -ffreestanding \
+                                                              -Werror -Wsign-compare -Wdouble-promotion -Wshadow -Wunused-variable \
+                                                              -Wno-missing-field-initializers -Wunused-function -Wno-maybe-uninitialized \
+                                                              -Wswitch -Wvla \
+                                                              -DTF_LITE_STATIC_MEMORY -DTF_LITE_USE_GLOBAL_CMATH_FUNCTIONS \
+                                                              -DTF_LITE_USE_GLOBAL_MIN -DTF_LITE_USE_GLOBAL_MAX -DTF_LITE_DISABLE_X86_NEON \
+                                                              -g -O3 -fno-builtin -std=c++11 -fstrict-aliasing -fno-rtti -fno-exceptions \
+                                                              -fno-threadsafe-statics -fmessage-length=0 -Wall -Wextra -Wstrict-aliasing \
+                                                              -Wno-unused-parameter \
+                                                              -o proj_menu.bc -MMD
+```
+This produces `proj_menu.bc` in the root project directory `1_10_26`.  
+
