@@ -248,10 +248,15 @@ asperkins42@milan3:~$ bass module load cmake/4.1.1
 At this point, I was getting an error using the old compilation command, so I ran `make load ... V=1` to get the exact command the Makefile uses to compile proj_menu.cc into proj_menu.o. I adjust this command slightly to produce proj_menu.bc instead, and can then run the LLVM pass on this new .bc file. 
 
 ```
-(amaranth) asperkins42@milan3:~/c/p/1_10_26 (main +*%)$ riscv64-unknown-elf-g++ -DREPLACE_NAME_=proj_menu -c -emit-llvm src/proj_menu.cc \                                            1 ↵ <- 0s121 |  3:13AM
-                                                              -march=rv32im -mabi=ilp32 -D__vexriscv__ -D PLACEHOLDER -D INCLUDE_MODEL_PDTI8 \
-                                                              -D PLATFORM_common_soc -D PLATFORM=common_soc \
-                                                              -Isrc -Isrc/third_party/gemmlowp -Isrc/third_party/flatbuffers/include \
+(amaranth) asperkins42@milan3:~/c/p/1_10_26 (main +*%)$ rm -f proj_menu.bc                                                                                                                <- 0s014 |  3:23AM
+
+                                                        /auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/bin/clang++ \
+                                                              -c -emit-llvm src/proj_menu.cc -o proj_menu.bc \
+                                                              --target=riscv32-unknown-elf -march=rv32im -mabi=ilp32 \
+                                                              -DREPLACE_NAME_=proj_menu -D__vexriscv__ -DPLACEHOLDER -DINCLUDE_MODEL_PDTI8 \
+                                                              -DPLATFORM_common_soc -DPLATFORM=common_soc \
+                                                              -Isrc -I$REPO/proj/common \
+                                                              -Isrc/third_party/gemmlowp -Isrc/third_party/flatbuffers/include \
                                                               -Isrc/third_party/ruy -Isrc/third_party/kissfft \
                                                               -I/home/asperkins42/cfu-playground-cfuaxi/soc/build/xilinx_alveo_u280.1_10_26/software/include \
                                                               -I/home/asperkins42/cfu-playground-cfuaxi/soc/build/xilinx_alveo_u280.1_10_26/software/libc \
@@ -259,17 +264,23 @@ At this point, I was getting an error using the old compilation command, so I ra
                                                               -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/software/include \
                                                               -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/cores/cpu/vexriscv \
                                                               -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/cores/cpu/serv \
-                                                              -I/home/asperkins42/cfu-playground-cfuaxi/proj/1_10_26/build/src \
-															  -ffunction-sections -fdata-sections -fno-common -fomit-frame-pointer -ffreestanding \
-                                                              -Werror -Wsign-compare -Wdouble-promotion -Wshadow -Wunused-variable \
+                                                              -ffunction-sections -fdata-sections -fno-common -fomit-frame-pointer -ffreestanding \
+                                                              -Wsign-compare -Wdouble-promotion -Wshadow -Wunused-variable \
                                                               -Wno-missing-field-initializers -Wunused-function -Wno-maybe-uninitialized \
                                                               -Wswitch -Wvla \
                                                               -DTF_LITE_STATIC_MEMORY -DTF_LITE_USE_GLOBAL_CMATH_FUNCTIONS \
                                                               -DTF_LITE_USE_GLOBAL_MIN -DTF_LITE_USE_GLOBAL_MAX -DTF_LITE_DISABLE_X86_NEON \
                                                               -g -O3 -fno-builtin -std=c++11 -fstrict-aliasing -fno-rtti -fno-exceptions \
                                                               -fno-threadsafe-statics -fmessage-length=0 -Wall -Wextra -Wstrict-aliasing \
-                                                              -Wno-unused-parameter \
-                                                              -o proj_menu.bc -MMD
+                                                              -Wno-unused-parameter
+
+warning: unknown warning option '-Wno-maybe-uninitialized'; did you mean '-Wno-uninitialized'? [-Wunknown-warning-option]
+src/proj_menu.cc:1:10: fatal error: 'cstdint' file not found
+#include <cstdint>
+         ^~~~~~~~~
+1 warning and 1 error generated.
+
+
 ```
 This produces `proj_menu.bc` in the root project directory `1_10_26`.  
 
