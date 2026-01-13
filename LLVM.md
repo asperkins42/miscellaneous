@@ -282,6 +282,7 @@ src/proj_menu.cc:1:10: fatal error: 'cstdint' file not found
 
 
 ```
+### LLVM setup on milan3
 This produces `proj_menu.bc` in the root project directory `1_10_26`.  
 
 This documents the minimal, working command sequence to go from a fresh `fish` shell to verified LLVM bitcode for `proj_menu.cc`. The goal is to produce `proj_menu.bc` so LLVM passes can be run over the CFU project menu code.
@@ -309,7 +310,7 @@ Invoke Clang to emit LLVM bitcode. The key details are:
 - `--gcc-toolchain` and `--sysroot` let Clang reuse the RISC-V GCC headers
 - `-std=gnu++14` and `-Wno-register` are required because LiteX RISC-V macros still use `register`
 - `-ffreestanding -nostdlib` match the embedded build environment
-
+```
     $LLVM/clang++ -emit-llvm -c src/proj_menu.cc -o proj_menu.bc \
       -std=gnu++14 -Wno-register \
       --target=riscv32-unknown-elf -march=rv32im -mabi=ilp32 \
@@ -336,7 +337,7 @@ Invoke Clang to emit LLVM bitcode. The key details are:
       -ffreestanding -fno-builtin -nostdlib \
       -Wno-uninitialized -Wno-unused-parameter -Wno-missing-field-initializers \
       -O3
-
+```
 Verify that the output exists and is valid LLVM IR bitcode. The file is written to the current working directory (`build/`), not `build/src/`.
 
     ls -lh proj_menu.bc
