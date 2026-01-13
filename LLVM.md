@@ -284,3 +284,67 @@ src/proj_menu.cc:1:10: fatal error: 'cstdint' file not found
 ```
 This produces `proj_menu.bc` in the root project directory `1_10_26`.  
 
+This documents the minimal, working command sequence to go from a fresh `fish` shell to verified LLVM bitcode for `proj_menu.cc`. The goal is to produce `proj_menu.bc` so LLVM passes can be run over the CFU project menu code.
+
+Start an interactive fish shell, load LLVM, and source the project environment so the RISC-V GCC toolchain is available. LLVM is used for bitcode generation, while the GCC toolchain supplies the sysroot and C++ headers.
+
+    fish
+    bass module load llvm/16.0.6
+    source ~/likelyImportant/source-me.fish
+
+Point explicitly to the LLVM binaries and the RISC-V GCC toolchain, then query the sysroot from GCC. The sysroot and C++ include paths are required so Clang can find standard headers such as <cstdint> while targeting bare-metal RISC-V.
+
+    set LLVM /auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/bin
+    set GCC_TOOLCHAIN /home/asperkins42/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14
+    set SYSROOT ($GCC_TOOLCHAIN/bin/riscv64-unknown-elf-gcc -print-sysroot)
+    set CXXINC $GCC_TOOLCHAIN/riscv64-unknown-elf/include/c++/10.1.0
+
+Change into the project build directory (where `src/proj_menu.cc` and the copied headers such as `cfu.h` live). The compilation must be run from this directory so `-Isrc` resolves correctly.
+
+    cd ~/c/p/1/build
+
+Invoke Clang to emit LLVM bitcode. The key details are:
+- `-emit-llvm` produces `.bc` instead of an object file
+- `--target=riscv32-unknown-elf`, `-march`, and `-mabi` match the firmware build
+- `--gcc-toolchain` and `--sysroot` let Clang reuse the RISC-V GCC headers
+- `-std=gnu++14` and `-Wno-register` are required because LiteX RISC-V macros still use `register`
+- `-ffreestanding -nostdlib` match the embedded build environment
+
+    $LLVM/clang++ -emit-llvm -c src/proj_menu.cc -o proj_menu.bc \
+      -std=gnu++14 -Wno-register \
+      --target=riscv32-unknown-elf -march=rv32im -mabi=ilp32 \
+      --gcc-toolchain=$GCC_TOOLCHAIN \
+      --sysroot=$SYSROOT \
+      -isystem $CXXINC \
+      -isystem $CXXINC/riscv64-unknown-elf \
+      -isystem $CXXINC/backward \
+      -isystem $SYSROOT/include \
+      -D__vexriscv__ -DPLACEHOLDER -DINCLUDE_MODEL_PDTI8 \
+      -DPLATFORM_common_soc -DPLATFORM=common_soc \
+      -Isrc \
+      -Isrc/third_party/gemmlowp \
+      -Isrc/third_party/flatbuffers/include \
+      -Isrc/third_party/ruy \
+      -Isrc/third_party/kissfft \
+      -I/home/asperkins42/cfu-playground-cfuaxi/soc/build/xilinx_alveo_u280.1_10_26/software/include \
+      -I/home/asperkins42/cfu-playground-cfuaxi/soc/build/xilinx_alveo_u280.1_10_26/software/libc \
+      -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include \
+      -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/software/include \
+      -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/software/libbase \
+      -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/cores/cpu/vexriscv \
+      -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/cores/cpu/serv \
+      -ffreestanding -fno-builtin -nostdlib \
+      -Wno-uninitialized -Wno-unused-parameter -Wno-missing-field-initializers \
+      -O3
+
+Verify that the output exists and is valid LLVM IR bitcode. The file is written to the current working directory (`build/`), not `build/src/`.
+
+    ls -lh proj_menu.bc
+    file proj_menu.bc
+
+Expected output will identify the file as “LLVM IR bitcode”. Optionally, disassemble it to human-readable LLVM IR to confirm correctness.
+
+    $LLVM/llvm-dis proj_menu.bc -o - | head
+
+If the above command prints LLVM IR, the bitcode is valid and ready to be used with `opt` or custom LLVM passes.
+
