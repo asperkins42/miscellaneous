@@ -357,5 +357,178 @@ To run the LLVM pass over the proj_menu.bc file, navigate into the 1_XX_26/build
   -disable-output proj_menu.bc
 ```
 
+### Running on U280
 
+```
+(amaranth) asperkins42@milan3:~/c/p/1/build (main +*%)$ $LLVM/clang++ -emit-llvm -c src/proj_menu.cc -o proj_menu.bc \                                                                    <- 0s036 |  8:47PM
+                                                              -std=gnu++14 -Wno-register \
+                                                              --target=riscv32-unknown-elf -march=rv32im -mabi=ilp32 \
+                                                              --gcc-toolchain=$GCC_TOOLCHAIN \
+                                                              --sysroot=$SYSROOT \
+                                                              -isystem $CXXINC \
+                                                              -isystem $CXXINC/riscv64-unknown-elf \
+                                                              -isystem $CXXINC/backward \
+                                                              -isystem $SYSROOT/include \
+                                                              -D__vexriscv__ -DPLACEHOLDER -DINCLUDE_MODEL_PDTI8 \
+                                                              -DPLATFORM_common_soc -DPLATFORM=common_soc \
+                                                              -Isrc \
+                                                              -Isrc/third_party/gemmlowp \
+                                                              -Isrc/third_party/flatbuffers/include \
+                                                              -Isrc/third_party/ruy \
+                                                              -Isrc/third_party/kissfft \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/soc/build/xilinx_alveo_u280.1_10_26/software/include \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/soc/build/xilinx_alveo_u280.1_10_26/software/libc \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/software/include \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/software/libbase \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/cores/cpu/vexriscv \
+                                                              -I/home/asperkins42/cfu-playground-cfuaxi/third_party/python/litex/litex/soc/cores/cpu/serv \
+                                                              -ffreestanding -fno-builtin -nostdlib \
+                                                              -Wno-uninitialized -Wno-unused-parameter -Wno-missing-field-initializers \
+                                                              -O0
+
+(amaranth) asperkins42@milan3:~/c/p/1/build (main +*%)$ /auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/bin/opt \                                                                    <- 0s114 |  8:47PM
+                                                              -load-pass-plugin ../../../../mm_detect/build/MatMulDetect.so \
+                                                              -passes='function(kernel-detect)' \
+                                                              -disable-output proj_menu.bc
+
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_123gemm_loop_i32_to_i64_rmEPKiS1_Pxiii'
+  headers: L1=%17 L2=%22 L3=%27
+  matrices: A=%13 B=%12 C=%14
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] No GEMM/Conv2D in 'pim_gemm_entry_rowmajor_out'
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_118gemm_kernel_i32_rmEPVKiS1_PVxiii'
+  headers: L1=%17 L2=%22 L3=%27
+  matrices: A=%13 B=%12 C=%14
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_114is_32b_alignedEPKv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_114is_64b_alignedEPKv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_124ptr_in_cfu_reachable_hbmEPKv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_148convert_AB_rowmajor_to_tilemajor_inplace_using_CEPVjS1_S1_j'
+[kernel-detect] No GEMM/Conv2D in '_ZL16flush_cpu_dcachev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_118gemm_tilemajor_cfuEjjjjjjb'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_124tilemajor_to_rowmajor_16EPVKyPVyj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_111copy_dwordsEPVyPVKyj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_18fence_ioEv'
+[kernel-detect] No GEMM/Conv2D in 'pim_gemm_entry'
+[kernel-detect] No GEMM/Conv2D in 'do_proj_menu'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_116read_menu_choiceEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_118do_seed_hbm_regionEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_123do_seed_identity_matrixEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_122do_seed_32x32_matricesEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_118do_load_scratchpadEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_110do_run_macEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_112do_clear_sp2Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_118do_run_tiled_32x32Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_119do_write_sp2_to_hbmEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_118do_dump_scratchpadEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_114do_cpu_hexdumpEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_121do_run_stripped_32x32Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_115do_host_gemm_32Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_115do_host_gemm_64Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_116do_host_gemm_128Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_116do_host_gemm_256Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_116do_host_gemm_512Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_117do_host_gemm_1024Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_117do_host_gemm_2048Ev'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_117do_probe_hbm_spanEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_129do_seed_rowmajor_power32_menuEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_127do_convert_row_to_tile_menuEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_135do_print_tilemajor_schedule_after_TEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_128do_run_cfu_gemm_after_T_menuEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_124do_bench_end_to_end_menuEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_122do_full_rank_gemm_testEv'
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_124do_demo_linear_bias_reluEv'
+  headers: L1=%66 L2=%71 L3=%76
+  matrices: A=%15 B=%1 C=%16
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_112do_demo_mlp2Ev'
+  headers: L1=%247 L2=%252 L3=%257
+  matrices: A=%32 B=%1 C=%33
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_112do_demo_mlp2Ev'
+  headers: L1=%139 L2=%144 L3=%149
+  matrices: A=%22 B=%1 C=%23
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_117do_demo_attentionEv'
+  headers: L1=%162 L2=%167 L3=%172
+  matrices: A=%23 B=%1 C=%24
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_117do_demo_attentionEv'
+  headers: L1=%98 L2=%103 L3=%108
+  matrices: A=%16 B=%1 C=%17
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_118do_demo_covarianceEv'
+  headers: L1=%112 L2=%117 L3=%122
+  matrices: A=%18 B=%1 C=%19
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] Conv2D in '_ZN12_GLOBAL__N_124do_demo_pack_gemm_unpackEv'
+  headers: L1=%324 L2=%329 L3=%343 L4=%347
+[kernel-detect] Conv2D in '_ZN12_GLOBAL__N_124do_demo_pack_gemm_unpackEv'
+  headers: L1=%258 L2=%263 L3=%277 L4=%281
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_124do_demo_pack_gemm_unpackEv'
+  headers: L1=%202 L2=%207 L3=%212
+  matrices: A=%30 B=%1 C=%31
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] Conv2D in '_ZN12_GLOBAL__N_124do_demo_pack_gemm_unpackEv'
+  headers: L1=%116 L2=%121 L3=%135 L4=%139
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_112ceil_div_u32Ejj'
+[kernel-detect] No GEMM/Conv2D in '_ZL17perf_get_mcycle64v'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_113report_statusEPKcj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_110tile_indexEjjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_113cfu_load_tileEjjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_117tile_base_addr_abEjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_116tile_base_addr_cEjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_111to_cfu_addrEj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_116status_to_stringEj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_119cfu_load_scratchpadEjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_121tile_base_addr_strideEjjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_124rowmajor_to_tilemajor_16EPVKjPVjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_110copy_wordsEPVjPVKjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_110zero_wordsEPVjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_114load_u64_wordsEPVKjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_115store_u64_wordsEPVjjy'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_112discard_lineEv'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_112prompt_hex32EPKcPj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_113hexdump_wordsEjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_117prompt_scratchpadEPj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_111prompt_uintEPKcjPj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_124check_sp0_against_a_tileEjPKc'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_114check_sp1_tileEjjPKc'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_124check_sp2_against_a_tileEjPKc'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_119cfu_peek_scratchpadEjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_121dump_scratchpad_rangeEjjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_119run_host_gemm_benchEi'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_123to_tile_major_16x16_i32EPKiPiii'
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_120gemm_tiled_tilemajorEPKiS1_Piiii'
+  headers: L1=%50 L2=%67 L3=%94
+  matrices: A=%17 B=%14 C=%18
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_125from_tile_major_16x16_i32EPKiPiii'
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_114gemm_referenceEPKiS1_Piiii'
+  headers: L1=%17 L2=%22 L3=%27
+  matrices: A=%13 B=%11 C=%14
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_19gemm_tileEPKiS1_Piiiiiii'
+  headers: L1=%23 L2=%28 L3=%41
+  matrices: A=%20 B=%17 C=%19
+  sizes: M=<unknown> N=<unknown> K=<unknown>
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_122prompt_dim_power_of_32EPj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_127seed_rowmajor_count_id_zeroEjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_119is_power_of_two_u32Ej'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_135schedule_tiled_gemm_tilemajor_printEjjjjjj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_120check_output_genericEjjjPKc'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_134gemm_reference_check_tilemajor_i64EPVKiS1_PVKxjjjPKc'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_115print_cycles_usEPKcy'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_116cycles_to_us_u64Ey'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_126fill_i32_diag_dominant_hbmEPVijji'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_128rowmajor_to_tilemajor_16_i64EPVKxPVxj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_120compare_i64_matricesEPVKxS1_jPKc'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_110xorshift32ERj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_117alloc_demo_regionEjPjS0_S0_S0_j'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_112fill_i32_hbmEPVijj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_125add_bias_relu_i64_inplaceEPVxPVKijj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_116checksum_i64_hbmEPVKxj'
+[kernel-detect] No GEMM/Conv2D in '_ZN12_GLOBAL__N_123row_normalize_proxy_i32EPVKiPVijj'
+```
 
