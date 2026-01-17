@@ -349,3 +349,13 @@ Expected output will identify the file as “LLVM IR bitcode”. Optionally, dis
 
 If the above command prints LLVM IR, the bitcode is valid and ready to be used with `opt` or custom LLVM passes.
 
+To run the LLVM pass over the proj_menu.bc file, navigate into the 1_XX_26/build directory and run this command
+```
+/auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/bin/opt \
+  -load-pass-plugin ../mm_detect/build/MatMulDetect.so \
+  -passes='function(kernel-detect)' \
+  -disable-output proj_menu.bc
+```
+
+
+
