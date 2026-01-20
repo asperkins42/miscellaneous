@@ -956,4 +956,264 @@ sed: -e expression #1, char 2: extra characters after command
 3965-  %.01437 = phi i32 [ %142, %141 ]
 3966-  %107 = load i32, ptr %1, align 4
 3967-  %108 = icmp ult i32 0, %107
+(amaranth) asperkins42@milan3:~/c/p/1/build (main +*%)$ /auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/bin/opt \                                       <- 0s161 |  9:49PM
+                                                              -load-pass-plugin ../../../../mm_detect/build/MatMulDetect.so \
+                                                              -passes='function(mem2reg,loop-simplify,loop-rotate,indvars,lcssa),function(kernel-detect,gemm-offload)' \
+                                                              -o proj_menu_offload.bc proj_menu_O0_nolsr.bc
+
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_123gemm_loop_i32_to_i64_rmEPKiS1_Pxiii'
+  headers: L1=%8 L2=%10 L3=%12
+  matrices: A=%0 B=%1 C=%2
+  sizes: M=%3 N=%4 K=%5
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_123gemm_loop_i32_to_i64_rmEPKiS1_Pxiii
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_123gemm_loop_i32_to_i64_rmEPKiS1_Pxiii'
+  [gemm-offload] >>> Inserted pim_gemm_entry() and bypassed GEMM loop.
+[kernel-detect] No GEMM in 'pim_gemm_entry_rowmajor_out'
+[gemm-offload] Visiting function: pim_gemm_entry_rowmajor_out
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_118gemm_kernel_i32_rmEPVKiS1_PVxiii'
+  headers: L1=%8 L2=%10 L3=%12
+  matrices: A=%0 B=%1 C=%2
+  sizes: M=%3 N=%4 K=%5
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_118gemm_kernel_i32_rmEPVKiS1_PVxiii
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_118gemm_kernel_i32_rmEPVKiS1_PVxiii'
+  [gemm-offload] >>> Inserted pim_gemm_entry() and bypassed GEMM loop.
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_114is_32b_alignedEPKv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_114is_32b_alignedEPKv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_114is_64b_alignedEPKv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_114is_64b_alignedEPKv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_124ptr_in_cfu_reachable_hbmEPKv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_124ptr_in_cfu_reachable_hbmEPKv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_148convert_AB_rowmajor_to_tilemajor_inplace_using_CEPVjS1_S1_j'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_148convert_AB_rowmajor_to_tilemajor_inplace_using_CEPVjS1_S1_j
+[kernel-detect] No GEMM in '_ZL16flush_cpu_dcachev'
+[gemm-offload] Visiting function: _ZL16flush_cpu_dcachev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_118gemm_tilemajor_cfuEjjjjjjb'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_118gemm_tilemajor_cfuEjjjjjjb
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_124tilemajor_to_rowmajor_16EPVKyPVyj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_124tilemajor_to_rowmajor_16EPVKyPVyj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_111copy_dwordsEPVyPVKyj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_111copy_dwordsEPVyPVKyj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_18fence_ioEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_18fence_ioEv
+[kernel-detect] No GEMM in 'pim_gemm_entry'
+[gemm-offload] Visiting function: pim_gemm_entry
+[kernel-detect] No GEMM in 'do_proj_menu'
+[gemm-offload] Visiting function: do_proj_menu
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_116read_menu_choiceEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_116read_menu_choiceEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_118do_seed_hbm_regionEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_118do_seed_hbm_regionEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_123do_seed_identity_matrixEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_123do_seed_identity_matrixEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_122do_seed_32x32_matricesEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_122do_seed_32x32_matricesEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_118do_load_scratchpadEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_118do_load_scratchpadEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_110do_run_macEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_110do_run_macEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_112do_clear_sp2Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_112do_clear_sp2Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_118do_run_tiled_32x32Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_118do_run_tiled_32x32Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_119do_write_sp2_to_hbmEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_119do_write_sp2_to_hbmEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_118do_dump_scratchpadEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_118do_dump_scratchpadEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_114do_cpu_hexdumpEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_114do_cpu_hexdumpEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_121do_run_stripped_32x32Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_121do_run_stripped_32x32Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_115do_host_gemm_32Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_115do_host_gemm_32Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_115do_host_gemm_64Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_115do_host_gemm_64Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_116do_host_gemm_128Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_116do_host_gemm_128Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_116do_host_gemm_256Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_116do_host_gemm_256Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_116do_host_gemm_512Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_116do_host_gemm_512Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_117do_host_gemm_1024Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_117do_host_gemm_1024Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_117do_host_gemm_2048Ev'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_117do_host_gemm_2048Ev
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_117do_probe_hbm_spanEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_117do_probe_hbm_spanEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_129do_seed_rowmajor_power32_menuEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_129do_seed_rowmajor_power32_menuEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_127do_convert_row_to_tile_menuEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_127do_convert_row_to_tile_menuEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_135do_print_tilemajor_schedule_after_TEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_135do_print_tilemajor_schedule_after_TEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_128do_run_cfu_gemm_after_T_menuEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_128do_run_cfu_gemm_after_T_menuEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_124do_bench_end_to_end_menuEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_124do_bench_end_to_end_menuEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_122do_full_rank_gemm_testEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_122do_full_rank_gemm_testEv
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_124do_demo_linear_bias_reluEv'
+  headers: L1=%46 L2=%49 L3=%52
+  matrices: A=%16 B=%18 C=%20
+  sizes: M=%83 N=%78 K=%69
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_124do_demo_linear_bias_reluEv
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_124do_demo_linear_bias_reluEv'
+  [gemm-offload] No (A,B,C,M,N,K) arg signature; using detected bases + SCEV.
+  [gemm-offload] >>> Inserted pim_gemm_entry() and bypassed GEMM loop.
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_112do_demo_mlp2Ev'
+  headers: L1=%167 L2=%170 L3=%173
+  matrices: A=%34 B=%37 C=%32
+  sizes: M=%204 N=%199 K=%190
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_112do_demo_mlp2Ev'
+  headers: L1=%89 L2=%92 L3=%95
+  matrices: A=%28 B=%30 C=%32
+  sizes: M=%126 N=%121 K=%112
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_112do_demo_mlp2Ev
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_112do_demo_mlp2Ev'
+  [gemm-offload] No (A,B,C,M,N,K) arg signature; using detected bases + SCEV.
+  [gemm-offload] >>> Inserted pim_gemm_entry() and bypassed GEMM loop.
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_112do_demo_mlp2Ev'
+  [gemm-offload] No (A,B,C,M,N,K) arg signature; using detected bases + SCEV.
+  [gemm-offload] >>> Inserted pim_gemm_entry() and bypassed GEMM loop.
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_117do_demo_attentionEv'
+  headers: L1=%110 L2=%113 L3=%116
+  matrices: A=%37 B=%30 C=%28
+  sizes: M=%147 N=%142 K=%133
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_117do_demo_attentionEv'
+  headers: L1=%65 L2=%68 L3=%71
+  matrices: A=%24 B=%26 C=%33
+  sizes: M=%103 N=%98 K=%88
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_117do_demo_attentionEv
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_117do_demo_attentionEv'
+  [gemm-offload] No (A,B,C,M,N,K) arg signature; using detected bases + SCEV.
+  [gemm-offload] >>> Inserted pim_gemm_entry() and bypassed GEMM loop.
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_117do_demo_attentionEv'
+  [gemm-offload] C store is not i64; skipping.
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_118do_demo_covarianceEv'
+  headers: L1=%73 L2=%76 L3=%79
+  matrices: A=%25 B=%23 C=%27
+  sizes: M=%110 N=%105 K=%96
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_118do_demo_covarianceEv
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_118do_demo_covarianceEv'
+  [gemm-offload] No (A,B,C,M,N,K) arg signature; using detected bases + SCEV.
+  [gemm-offload] >>> Inserted pim_gemm_entry() and bypassed GEMM loop.
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_124do_demo_pack_gemm_unpackEv'
+  headers: L1=%106 L2=%109 L3=%112
+  matrices: A=%24 B=%26 C=%28
+  sizes: M=%143 N=%138 K=%129
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_124do_demo_pack_gemm_unpackEv
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_124do_demo_pack_gemm_unpackEv'
+  [gemm-offload] No (A,B,C,M,N,K) arg signature; using detected bases + SCEV.
+  [gemm-offload] >>> Inserted pim_gemm_entry() and bypassed GEMM loop.
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_112ceil_div_u32Ejj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_112ceil_div_u32Ejj
+[kernel-detect] No GEMM in '_ZL17perf_get_mcycle64v'
+[gemm-offload] Visiting function: _ZL17perf_get_mcycle64v
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_113report_statusEPKcj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_113report_statusEPKcj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_110tile_indexEjjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_110tile_indexEjjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_113cfu_load_tileEjjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_113cfu_load_tileEjjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_117tile_base_addr_abEjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_117tile_base_addr_abEjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_116tile_base_addr_cEjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_116tile_base_addr_cEjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_111to_cfu_addrEj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_111to_cfu_addrEj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_116status_to_stringEj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_116status_to_stringEj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_119cfu_load_scratchpadEjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_119cfu_load_scratchpadEjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_121tile_base_addr_strideEjjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_121tile_base_addr_strideEjjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_124rowmajor_to_tilemajor_16EPVKjPVjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_124rowmajor_to_tilemajor_16EPVKjPVjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_110copy_wordsEPVjPVKjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_110copy_wordsEPVjPVKjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_110zero_wordsEPVjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_110zero_wordsEPVjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_114load_u64_wordsEPVKjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_114load_u64_wordsEPVKjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_115store_u64_wordsEPVjjy'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_115store_u64_wordsEPVjjy
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_112discard_lineEv'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_112discard_lineEv
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_112prompt_hex32EPKcPj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_112prompt_hex32EPKcPj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_113hexdump_wordsEjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_113hexdump_wordsEjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_117prompt_scratchpadEPj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_117prompt_scratchpadEPj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_111prompt_uintEPKcjPj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_111prompt_uintEPKcjPj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_124check_sp0_against_a_tileEjPKc'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_124check_sp0_against_a_tileEjPKc
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_114check_sp1_tileEjjPKc'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_114check_sp1_tileEjjPKc
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_124check_sp2_against_a_tileEjPKc'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_124check_sp2_against_a_tileEjPKc
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_119cfu_peek_scratchpadEjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_119cfu_peek_scratchpadEjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_121dump_scratchpad_rangeEjjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_121dump_scratchpad_rangeEjjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_119run_host_gemm_benchEi'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_119run_host_gemm_benchEi
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_123to_tile_major_16x16_i32EPKiPiii'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_123to_tile_major_16x16_i32EPKiPiii
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_120gemm_tiled_tilemajorEPKiS1_Piiii'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_120gemm_tiled_tilemajorEPKiS1_Piiii
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_125from_tile_major_16x16_i32EPKiPiii'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_125from_tile_major_16x16_i32EPKiPiii
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_114gemm_referenceEPKiS1_Piiii'
+  headers: L1=%8 L2=%10 L3=%12
+  matrices: A=%0 B=%1 C=%2
+  sizes: M=%3 N=%5 K=%4
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_114gemm_referenceEPKiS1_Piiii
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_114gemm_referenceEPKiS1_Piiii'
+  [gemm-offload] C store is not i64; skipping.
+[kernel-detect] GEMM in '_ZN12_GLOBAL__N_19gemm_tileEPKiS1_Piiiiiii'
+  headers: L1=%11 L2=%13 L3=%19
+  matrices: A=%0 B=%1 C=%2
+  sizes: M=%3 N=%5 K=%4
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_19gemm_tileEPKiS1_Piiiiiii
+  [gemm-offload] GEMM-like loop detected in '_ZN12_GLOBAL__N_19gemm_tileEPKiS1_Piiiiiii'
+  [gemm-offload] C store is not i64; skipping.
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_122prompt_dim_power_of_32EPj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_122prompt_dim_power_of_32EPj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_127seed_rowmajor_count_id_zeroEjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_127seed_rowmajor_count_id_zeroEjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_119is_power_of_two_u32Ej'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_119is_power_of_two_u32Ej
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_135schedule_tiled_gemm_tilemajor_printEjjjjjj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_135schedule_tiled_gemm_tilemajor_printEjjjjjj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_120check_output_genericEjjjPKc'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_120check_output_genericEjjjPKc
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_134check_tilemajor_c_equals_a_via_cfuEjjjPKc'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_134check_tilemajor_c_equals_a_via_cfuEjjjPKc
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_115print_cycles_usEPKcy'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_115print_cycles_usEPKcy
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_116cycles_to_us_u64Ey'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_116cycles_to_us_u64Ey
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_126fill_i32_diag_dominant_hbmEPVijji'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_126fill_i32_diag_dominant_hbmEPVijji
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_128rowmajor_to_tilemajor_16_i64EPVKxPVxj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_128rowmajor_to_tilemajor_16_i64EPVKxPVxj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_120compare_i64_matricesEPVKxS1_jPKc'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_120compare_i64_matricesEPVKxS1_jPKc
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_110xorshift32ERj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_110xorshift32ERj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_117alloc_demo_regionEjPjS0_S0_S0_j'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_117alloc_demo_regionEjPjS0_S0_S0_j
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_112fill_i32_hbmEPVijj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_112fill_i32_hbmEPVijj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_125add_bias_relu_i64_inplaceEPVxPVKijj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_125add_bias_relu_i64_inplaceEPVxPVKijj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_116checksum_i64_hbmEPVKxj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_116checksum_i64_hbmEPVKxj
+[kernel-detect] No GEMM in '_ZN12_GLOBAL__N_123row_normalize_proxy_i32EPVKiPVijj'
+[gemm-offload] Visiting function: _ZN12_GLOBAL__N_123row_normalize_proxy_i32EPVKiPVijj
+(amaranth) asperkins42@milan3:~/c/p/1/build (main +*%)$ /auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/bin/llc \                                       <- 0s085 |  9:49PM
+                                                            -filetype=obj -o proj_menu_offload.o proj_menu_offload.bc
+(amaranth) asperkins42@milan3:~/c/p/1/build (main +*%)$ cp proj_menu_offload.o /home/asperkins42/cfu-playground-cfuaxi/proj/1_16_26/build/src/proj_menu.o    <- 1s467 |  9:50PM
+(amaranth) asperkins42@milan3:~/c/p/1/build (main +*%)$ touch /home/asperkins42/cfu-playground-cfuaxi/proj/1_16_26/build/src/proj_menu.o                     <- 0s016 |  9:51PM
 ```
