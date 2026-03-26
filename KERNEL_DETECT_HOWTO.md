@@ -1,7 +1,15 @@
 # LLVM Kernel-Detect Pass: Build & Usage Guide
 
-How to build `MatMulDetect.so` and run the `kernel-detect` LLVM pass to find
-GEMM loop nests in compiled RISC-V bitcode.
+How to build the LLVM pass plugins and detect GEMM loop nests in compiled
+RISC-V bitcode.  Two plugins are provided:
+
+| Plugin | Pass name | What it does |
+|---|---|---|
+| `MatMulDetect.so` | `kernel-detect` | Structural loop-nest detection only |
+| `MatMulDetectJIT.so` | `jit-kernel-detect` | Structural detection **+ JIT behavioral verification** (T1/T2 tests) |
+
+`gemm_offload.cpp` (the original submitted artifact for GRACE ICS 2026 §396)
+is unchanged; the JIT plugin lives in `jit_verify.cpp` + `jit_kernel_detect.cpp`.
 
 ---
 
@@ -46,27 +54,37 @@ set CXXINC   $GCC_TOOLCHAIN/riscv64-unknown-elf/include/c++/10.1.0
 
 ---
 
-## 2. Build the Pass
+## 2. Build the Passes
 
-Do this once (or after any source change to `gemm_offload.cpp`).
+Do this once (or after any source change).
 
 ```fish
-cd ~/mm_detect/build
+cd ~/mm_detect
+mkdir -p build && cd build
 
-CC=clang CXX=clang++ cmake .. \
-    -DLLVM_DIR=/auto/software/swtree/ubuntu22.04/x86_64/llvm/16.0.6/lib/cmake/llvm
+# Wipe any stale cache before the first configure (clang++ vs GCC detection)
+rm -rf CMakeCache.txt CMakeFiles
 
-make -j(nproc)
+cmake .. && make -j(nproc)
 ```
 
 Success looks like:
 
 ```
 -- Found LLVM 16.0.6 in ...
+[ 16%] Building libLLVMSupportNeeded.a from libLLVMSupport.a
 [100%] Built target MatMulDetect
+[100%] Built target MatMulDetectJIT
 ```
 
-The plugin is now at `~/mm_detect/build/MatMulDetect.so`.
+Both plugins are now at `~/mm_detect/build/`:
+- `MatMulDetect.so` — original structural pass
+- `MatMulDetectJIT.so` — JIT behavioral verification pass
+
+> **Note:** CMake must use GCC 13 (system default on milan3), not clang, as the
+> host compiler.  clang++-16 is not on PATH as `clang++-16`; it is available
+> only as `clang++` after `bass module load llvm/16.0.6`.  If you see
+> `CMAKE_CXX_COMPILER … not found`, wipe `CMakeCache.txt` and re-run `cmake ..`.
 
 ---
 
@@ -117,50 +135,83 @@ ls -lh proj_menu.bc    # should be non-zero
 
 ---
 
-## 4. Run the Pass
+## 4. Run the Passes
 
-Always use an **absolute path** to `MatMulDetect.so`.  A relative path like
-`../mm_detect/build/MatMulDetect.so` resolves from the shell's CWD, but
-`opt` `dlopen`s it from its own working directory, which can differ — causing
-the cryptic `"Failed to load passes"` error even when the file clearly exists.
+Always use an **absolute or `./`-relative path** to the `.so`.  A bare
+relative path resolves from `opt`'s CWD, not the shell's, causing the cryptic
+`"Failed to load passes"` error.
+
+### 4a. Structural detection only (original pass)
+
+```fish
+cd ~/mm_detect/build
+$LLVM/opt \
+    -load-pass-plugin ./MatMulDetect.so \
+    -passes=kernel-detect \
+    -disable-output ~/cfu-playground-cfuaxi/proj/2_6_26/build/proj_menu.bc
+```
+
+### 4b. JIT behavioral verification (new pass)
+
+```fish
+cd ~/mm_detect/build
+$LLVM/opt \
+    -load-pass-plugin ./MatMulDetectJIT.so \
+    -passes=jit-kernel-detect \
+    -disable-output ~/cfu-playground-cfuaxi/proj/2_6_26/build/proj_menu.bc
+```
+
+Disable JIT (structural only, same candidates as `kernel-detect`):
 
 ```fish
 $LLVM/opt \
-    -load-pass-plugin /home/asperkins42/mm_detect/build/MatMulDetect.so \
-    -passes='function(kernel-detect)' \
-    -disable-output proj_menu.bc
+    -load-pass-plugin ./MatMulDetectJIT.so \
+    -passes=jit-kernel-detect -jit-verify=false \
+    -disable-output ~/cfu-playground-cfuaxi/proj/2_6_26/build/proj_menu.bc
 ```
 
-`-disable-output` suppresses writing transformed bitcode (we only want the
-diagnostic output, not a new `.bc`).
+`-disable-output` suppresses writing transformed bitcode.
 
 ---
 
 ## 5. Reading the Output
 
-For each function the pass prints one of two things:
+### kernel-detect (structural)
 
 ```
 [kernel-detect] No GEMM in 'foo'
-```
-
-or
-
-```
 [kernel-detect] GEMM in '_ZN12_GLOBAL__N_118gemm_kernel_i32_rmEPVKiS1_PVxiii'
   headers: L1=%17 L2=%22 L3=%27
   matrices: A=%13 B=%12 C=%14
   sizes: M=%19 N=%24 K=%29
 ```
 
-| Field | Meaning |
-|---|---|
-| `L1 / L2 / L3` | The three loop-header basic blocks (outermost → innermost) |
-| `A / B / C` | LLVM SSA values for the matrix pointer arguments |
-| `M / N / K` | Loop trip-count SSA values; `<unknown>` if SCEV couldn't resolve them |
+### jit-kernel-detect (behavioral)
 
-Use `$LLVM/llvm-dis proj_menu.bc` and grep for the `%N` values to inspect the
-surrounding IR if you need to trace a detection back to source.
+```
+[jit-kernel-detect] CONFIRMED GEMM in 'gemm_loop_i32_to_i64_rm'
+  [jit-kernel-detect] reason: T1+T2 behavioral checks passed
+[jit-kernel-detect] Stats for 'gemm_loop_i32_to_i64_rm':
+  structural=1 confirmed=1 rejected=0 jit_err=0 sig_err=0
+
+[jit-kernel-detect] FALSE POSITIVE rejected in 'gemm_reference': T1/T2 check failed
+[jit-kernel-detect] SIGNATURE MISMATCH in 'do_demo_mlp2': IR signature mismatch: …got 0 params
+```
+
+| Output tag | Meaning |
+|---|---|
+| `CONFIRMED GEMM` | Passed both structural and T1+T2 behavioral tests |
+| `FALSE POSITIVE rejected` | Structural match but T1/T2 behavioral check failed |
+| `SIGNATURE MISMATCH` | IR signature ≠ `void(ptr,ptr,ptr,int,int,int)` or symbol lookup failed |
+| `JIT ERROR` | Retargeting or LLJIT compilation failed; falls back to structural match |
+| `STRUCTURAL GEMM (fallback)` | JIT error but structural evidence printed anyway |
+
+**`sig_err` in stats** counts functions rejected by the IR signature check
+(wrong param count or types) — these are structural false positives where the
+inner loop body looks like a GEMM but the enclosing function has a different ABI.
+
+Use `$LLVM/llvm-dis proj_menu.bc` and grep for the `%N` values to trace a
+detection back to source IR.
 
 ---
 
@@ -168,11 +219,12 @@ surrounding IR if you need to trace a detection back to source.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| `Failed to load passes … Request ignored` | Relative `.so` path, or `.so` built against a different LLVM | Use absolute path; confirm `llvm/16.0.6` loaded before `cmake`/`make` |
-| `unknown function pass 'kernel-detect'` | Plugin didn't load (see above), or pass registration string mismatch | Check `registerPipelineParsingCallback` in source registers exactly `"kernel-detect"` |
+| `Failed to load passes … Request ignored` | Relative `.so` path, or `.so` built against a different LLVM | Use `./MatMulDetect.so` from `build/`; confirm `llvm/16.0.6` loaded before `cmake`/`make` |
+| `unknown pass name 'jit-kernel-detect'` | Plugin didn't load (see above) | Check `LD_DEBUG=libs opt …` for the exact undefined symbol |
 | All functions report `No GEMM` | Bitcode compiled with `-O2`/`-O3` | Recompile with `-O0` |
-| Trip counts all `<unknown>` at `-O0` | SCEV can't resolve through non-affine indexing | Expected for complex loop bounds; the loop *is* detected, sizes just aren't static |
-| `ldd MatMulDetect.so` shows missing libs | LLVM shared libs not on `LD_LIBRARY_PATH` | `bass module load llvm/16.0.6` before running `opt` |
+| Trip counts all `<unknown>` at `-O0` | SCEV can't resolve non-affine bounds | Expected; loop is still detected, sizes just aren't static |
+| `JIT session error: Symbols not found` | Structural GEMM in a wrapper that calls helpers (bodies deleted during retargeting) | Expected; shown as SIGNATURE MISMATCH in stats |
+| `cmake … CMAKE_CXX_COMPILER not found` | Stale cache from previous `-DCMAKE_CXX_COMPILER=clang++-16` run | `rm CMakeCache.txt CMakeFiles -rf && cmake ..` |
 
 ---
 
@@ -187,7 +239,7 @@ set GCC_TOOLCHAIN /home/asperkins42/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86
 set SYSROOT ($GCC_TOOLCHAIN/bin/riscv64-unknown-elf-gcc -print-sysroot)
 set CXXINC $GCC_TOOLCHAIN/riscv64-unknown-elf/include/c++/10.1.0
 
-# --- (re)build pass if source changed ---
+# --- (re)build passes if source changed ---
 cd ~/mm_detect/build && make -j(nproc) && cd -
 
 # --- compile bitcode (run from proj build dir) ---
@@ -214,9 +266,19 @@ $LLVM/clang++ -emit-llvm -c src/proj_menu.cc -o proj_menu.bc \
     -Wno-uninitialized -Wno-unused-parameter -Wno-missing-field-initializers \
     -O0
 
-# --- run pass ---
-$LLVM/opt \
-    -load-pass-plugin /home/asperkins42/mm_detect/build/MatMulDetect.so \
-    -passes='function(kernel-detect)' \
-    -disable-output proj_menu.bc
+# --- run structural pass (original) ---
+cd ~/mm_detect/build
+$LLVM/opt -load-pass-plugin ./MatMulDetect.so \
+    -passes=kernel-detect -disable-output \
+    ~/cfu-playground-cfuaxi/proj/2_6_26/build/proj_menu.bc
+
+# --- run JIT behavioral pass (new) ---
+$LLVM/opt -load-pass-plugin ./MatMulDetectJIT.so \
+    -passes=jit-kernel-detect -disable-output \
+    ~/cfu-playground-cfuaxi/proj/2_6_26/build/proj_menu.bc
+
+# --- JIT pass, structural-only mode ---
+$LLVM/opt -load-pass-plugin ./MatMulDetectJIT.so \
+    -passes=jit-kernel-detect -jit-verify=false -disable-output \
+    ~/cfu-playground-cfuaxi/proj/2_6_26/build/proj_menu.bc
 ```
