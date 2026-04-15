@@ -182,6 +182,10 @@ CSR-SpMM    xfmr-95-N4     512x33792x4         5   1665026375     0.001     343.
 
 ### DDR (SOFTWARE ONLY)
 
+[w] Software-only paper-comparison benchmark suite
+[w] This suite mirrors the W-paper sweep but runs each case once and never issues CFU/HW commands.
+[w] Large dense software cases can take a very long time on the softcore.
+
 [w] Phase 1: kernel software baselines (1x each)
 [w] SW GEMM kernel sweep is capped at N<=2048 to keep softcore runtime reasonable.
 Kernel      Case           Shape             Den      SW1xCyc   SW_GOPS  CanonEff   Checksum
@@ -239,5 +243,69 @@ CSR-SpMM    xfmr-80-N4     512x33792x4        20    839224607     0.008     343.
 CSR-SpMM    xfmr-90-N4     512x33792x4        10    438841192     0.007     342.60  0xb844c84f
 [sw-only][setup] w CSR32 SpMM M=512 K=33792 N=4 density=5% active_ports=8 generating CSR32...
 [sw-only][perf] CSR32 SpMM SW=224667335 cyc GOPS=0.007 checksum=0xd9ee6046
+CSR-SpMM    xfmr-95-N4     512x33792x4         5    224667335     0.007     334.34  0xd9ee6046
+
+[w] Phase 2: demo software baselines (1x each)
+Case                   Shape        SW1xTotal    SW_GOPS    Checksum    Note
+---------------------  -----------  -----------  ---------  ----------  ----------------
+Linear+bias+ReLU       N=32              575268      0.028  0xb828d5e8  
+Linear+bias+ReLU       N=64            13278730      0.009  0xbcf5a1d8  
+Linear+bias+ReLU       N=128          104844519      0.010  0x9badf1cf  
+Linear+bias+ReLU       N=256          832282916      0.010  0x5360d3ce  
+Linear+bias+ReLU       N=512         6884702799      0.009  0x9cb8332d  
+Linear+bias+ReLU       N=1024       55101576312      0.009  0x9e89b5d4  
+Linear+bias+ReLU       N=2048       505489512504      0.008  0x98fbcca3  
+Linear+bias+ReLU       N=4096               N/A        N/A         N/A  skip: scratch cap
+Linear+bias+ReLU       N=8192               N/A        N/A         N/A  skip: scratch cap
+
+MLP2                   N=32             1112059      0.029  0xc18a9969  
+MLP2                   N=64            26482117      0.009  0x0c47c282  
+MLP2                   N=128          209381756      0.010  0xb766422e  
+MLP2                   N=256         1663175334      0.010  0x8b3592e2  
+MLP2                   N=512        13764006625      0.009  0x7dba89de  
+MLP2                   N=1024       110184450026      0.009  0x1629c593  
+MLP2                   N=2048       1010900181846      0.008  0xa79dee04  
+MLP2                   N=4096               N/A        N/A         N/A  skip: scratch cap
+MLP2                   N=8192               N/A        N/A         N/A  skip: scratch cap
+
+Attention-ish          N=32             1169797      0.014  0xa5a5a5a5  
+Attention-ish          N=64            18549063      0.007  0xa5a5a5a5  
+Attention-ish          N=128          151613105      0.006  0xa5a5a5a5  
+Attention-ish          N=256         1307799884      0.006  0xa5a5a5a5  
+Attention-ish          N=512                N/A        N/A         N/A  skip: O(N^3) cap
+Attention-ish          N=1024               N/A        N/A         N/A  skip: O(N^3) cap
+Attention-ish          N=2048               N/A        N/A         N/A  skip: O(N^3) cap
+Attention-ish          N=4096               N/A        N/A         N/A  skip: O(N^3) cap
+Attention-ish          N=8192               N/A        N/A         N/A  skip: O(N^3) cap
+
+Covariance/Gram        N=32              739403      0.022  0xa5a5a5a5  
+Covariance/Gram        N=64            13912206      0.009  0xa5a5a5a5  
+Covariance/Gram        N=128          107374088      0.009  0xa5a5a5a5  
+Covariance/Gram        N=256          842362802      0.009  0xa5a5a5a5  
+Covariance/Gram        N=512         6924500674      0.009  0xa5a5a5a5  
+Covariance/Gram        N=1024       55235020756      0.009  0xa5a5a5a5  
+Covariance/Gram        N=2048       506046858647      0.008  0xa5a5a5a5  
+Covariance/Gram        N=4096               N/A        N/A         N/A  skip: scratch cap
+Covariance/Gram        N=8192               N/A        N/A         N/A  skip: scratch cap
+
+Dense GEMV proj        N=32               28128      0.018  0xd1caf642  
+Dense GEMV proj        N=64               99958      0.020  0xfe8bcb8c  
+Dense GEMV proj        N=128             283852      0.028  0x9e324f0b  
+Dense GEMV proj        N=256            1079722      0.030  0x25941f9a  
+Dense GEMV proj        N=512            4251660      0.030  0x99589d11  
+Dense GEMV proj        N=1024          16890925      0.031  0x9d96283e  
+Dense GEMV proj        N=2048          77883486      0.026  0x52ad91e7  
+Dense GEMV proj        N=4096         328037907      0.025  0xda643e13  
+Dense GEMV proj        N=8192        1311289481      0.025  0x157e6da8  
+
+[sw-only][setup] w D6 Sparse aggregation M=512 K=33792 density=15% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMV SW=126029651 cyc GOPS=0.010 checksum=0xf7adecc8
+Sparse SpMV agg        512x33792      126029651      0.010  0xf7adecc8  
+[sw-only][setup] w D7 Sparse linear M=512 K=33792 N=4 density=15% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMM SW=643099461 cyc GOPS=0.008 checksum=0x639998e2
+Sparse SpMM linear     512x33792x4    643099461      0.008  0x639998e2  
+
+[w] Suite complete. These rows are DRAM/CPU baselines only; no HW cycles or speedups are reported here.
+
 CSR-SpMM    xfmr-95-N4     512x33792x4         5    224667335     0.007     334.34  0xd9ee6046
 
