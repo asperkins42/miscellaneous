@@ -180,4 +180,64 @@ CSR-SpMM    xfmr-90-N4     512x33792x4        10   3273453335     0.001     350.
 [sw-only][perf] CSR32 SpMM SW=1665026375 cyc GOPS=0.001 checksum=0xd9ee6046
 CSR-SpMM    xfmr-95-N4     512x33792x4         5   1665026375     0.001     343.33  0xd9ee6046
 
+### DDR (SOFTWARE ONLY)
+
+[w] Phase 1: kernel software baselines (1x each)
+[w] SW GEMM kernel sweep is capped at N<=2048 to keep softcore runtime reasonable.
+Kernel      Case           Shape             Den      SW1xCyc   SW_GOPS  CanonEff   Checksum
+----------  -------------  ----------------  ---  -----------  --------  --------  ----------
+[w][perf] SW GEMV N=1024 cyc=18915373 GOPS=0.027 checksum=0xb1dbc34d
+GEMV        dense-1024     N=1024              -     18915373     0.027     469.66  0xb1dbc34d
+[w][perf] SW GEMV N=2048 cyc=86033465 GOPS=0.024 checksum=0xff1001c9
+GEMV        dense-2048     N=2048              -     86033465     0.024     477.84  0xff1001c9
+[w][perf] SW GEMV N=4096 cyc=361539803 GOPS=0.023 checksum=0xcb2b0fbe
+GEMV        dense-4096     N=4096              -    361539803     0.023     473.46  0xcb2b0fbe
+[w][perf] SW GEMV N=8192 cyc=1446018391 GOPS=0.023 checksum=0xff833018
+GEMV        dense-8192     N=8192              -   1446018391     0.023     473.46  0xff833018
+[w][perf] SW GEMV N=16384 cyc=5783574445 GOPS=0.023 checksum=0x6a154d60
+GEMV        dense-16384    N=16384             -   5783574445     0.023     473.46  0x6a154d60
+[w][perf] SW GEMM N=512 cyc=7150147955 GOPS=0.009 checksum=0x3e91001c
+GEMM        dense-512      N=512               -   7150147955     0.009    4690.00  0x3e91001c
+[w][perf] SW GEMM N=1024 cyc=59925023245 GOPS=0.008 checksum=0xaab07d3b
+GEMM        dense-1024     N=1024              -  59925023245     0.008    4475.00  0xaab07d3b
+[w][perf] SW GEMM N=2048 cyc=503370173829 GOPS=0.008 checksum=0x5191dd1d
+GEMM        dense-2048     N=2048              -  503370173829     0.008    4265.00  0x5191dd1d
+GEMM        dense-4096     N=4096              -          N/A       N/A       N/A         cap
+GEMM        dense-8192     N=8192              -          N/A       N/A       N/A         cap
+[sw-only][setup] w CSR32 SpMV M=512 K=33792 density=50% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMV SW=327313275 cyc GOPS=0.013 checksum=0x9ca64d72
+CSR-SpMV    xfmr-50        512x33792          50    327313275     0.013     167.21  0x9ca64d72
+[sw-only][setup] w CSR32 SpMV M=512 K=33792 density=40% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMV SW=271879552 cyc GOPS=0.012 checksum=0x3e004e8d
+CSR-SpMV    xfmr-60        512x33792          40    271879552     0.012     167.50  0x3e004e8d
+[sw-only][setup] w CSR32 SpMV M=512 K=33792 density=30% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMV SW=216749601 cyc GOPS=0.011 checksum=0xaf75d5d4
+CSR-SpMV    xfmr-70        512x33792          30    216749601     0.011     168.59  0xaf75d5d4
+[sw-only][setup] w CSR32 SpMV M=512 K=33792 density=20% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMV SW=158145062 cyc GOPS=0.010 checksum=0xe600e581
+CSR-SpMV    xfmr-80        512x33792          20    158145062     0.010     168.30  0xe600e581
+[sw-only][setup] w CSR32 SpMV M=512 K=33792 density=10% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMV SW=90859292 cyc GOPS=0.009 checksum=0x515403b1
+CSR-SpMV    xfmr-90        512x33792          10     90859292     0.009     166.84  0x515403b1
+[sw-only][setup] w CSR32 SpMV M=512 K=33792 density=5% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMV SW=50011897 cyc GOPS=0.008 checksum=0x1ea9af7a
+CSR-SpMV    xfmr-95        512x33792           5     50011897     0.008     169.21  0x1ea9af7a
+[sw-only][setup] w CSR32 SpMM M=512 K=33792 N=4 density=50% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMM SW=1857759386 cyc GOPS=0.009 checksum=0x0505057e
+CSR-SpMM    xfmr-50-N4     512x33792x4        50   1857759386     0.009     344.81  0x0505057e
+[sw-only][setup] w CSR32 SpMM M=512 K=33792 N=4 density=40% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMM SW=1544179997 cyc GOPS=0.008 checksum=0xec604139
+CSR-SpMM    xfmr-60-N4     512x33792x4        40   1544179997     0.008     344.61  0xec604139
+[sw-only][setup] w CSR32 SpMM M=512 K=33792 N=4 density=30% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMM SW=1205437490 cyc GOPS=0.008 checksum=0xb42cc209
+CSR-SpMM    xfmr-70-N4     512x33792x4        30   1205437490     0.008     344.40  0xb42cc209
+[sw-only][setup] w CSR32 SpMM M=512 K=33792 N=4 density=20% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMM SW=839224607 cyc GOPS=0.008 checksum=0xdd4c3ed7
+CSR-SpMM    xfmr-80-N4     512x33792x4        20    839224607     0.008     343.33  0xdd4c3ed7
+[sw-only][setup] w CSR32 SpMM M=512 K=33792 N=4 density=10% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMM SW=438841192 cyc GOPS=0.007 checksum=0xb844c84f
+CSR-SpMM    xfmr-90-N4     512x33792x4        10    438841192     0.007     342.60  0xb844c84f
+[sw-only][setup] w CSR32 SpMM M=512 K=33792 N=4 density=5% active_ports=8 generating CSR32...
+[sw-only][perf] CSR32 SpMM SW=224667335 cyc GOPS=0.007 checksum=0xd9ee6046
+CSR-SpMM    xfmr-95-N4     512x33792x4         5    224667335     0.007     334.34  0xd9ee6046
 
